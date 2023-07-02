@@ -1,0 +1,26 @@
+{
+    "name": "crx-vite",
+    "private": true,
+    "version": "0.0.1",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview",
+        "sass:content": "sass --watch public/style/content.scss:public/style/content.css"
+    },
+    "dependencies": {
+        "crypto-js": "^4.1.1",
+        "element-plus": "^2.3.7",
+        "pinia": "^2.1.4",
+        "vue": "^3.2.47",
+        "vue-router": "^4.2.2"
+    },
+    "devDependencies": {
+        "@vitejs/plugin-vue": "^4.1.0",
+        "sass": "^1.63.6",
+        "unplugin-auto-import": "^0.16.4",
+        "unplugin-vue-components": "^0.25.1",
+        "vite": "^4.3.9"
+    }
+}
