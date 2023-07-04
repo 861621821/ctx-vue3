@@ -169,6 +169,7 @@ class Background {
         keys.length &&
             chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
                 if (tabs[0] && !tabs[0].url.startsWith('chrome://')) {
+                    console.log(tabs, tabs[0].id);
                     chrome.tabs.sendMessage(tabs[0].id, { type: 3, data });
                 }
             });

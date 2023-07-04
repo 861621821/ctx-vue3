@@ -12,12 +12,12 @@
 import { ref } from "vue";
 
 const enableJira = ref(false);
-chrome.storage.sync.get("enableJira", (res) => {
+chrome.storage.local.get("enableJira", (res) => {
   enableJira.value = !!res.enableJira;
 });
 
 const onChange = () => {
-  chrome.storage.sync.set({ enableJira: enableJira.value });
+  chrome.storage.local.set({ enableJira: enableJira.value });
 };
 </script>
 
