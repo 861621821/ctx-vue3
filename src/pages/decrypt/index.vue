@@ -27,7 +27,7 @@
             class="row"
             v-for="(item, i) in listMap"
             :key="i"
-            :class="current === i ? 'selected' : ''"
+            :class="currentIndex === i ? 'selected' : ''"
             @click="hanldeViewParams(item, i)"
           >
             <div class="td">{{ i + 1 }}</div>
@@ -37,16 +37,34 @@
         </div>
       </div>
       <div class="bottom">
-        <div class="info">
-          <i
-            class="iconfont icon-fuzhi"
-            v-if="currentParams"
-            v-copyToClipboard="currentParams"
-          ></i>
-          <div class="json-box">
-            <pre id="json-inner"></pre>
-          </div>
-        </div>
+        <el-tabs type="border-card" model-value="Payload">
+          <el-scrollbar height="100%">
+            <el-tab-pane label="Headers" name="Headers">
+              <el-table
+                v-if="currentHeaders.length"
+                :data="currentHeaders"
+                size="small"
+                border
+                style="width: 100%"
+              >
+                <el-table-column prop="name" label="Name" width="120" />
+                <el-table-column prop="value" label="Value" />
+              </el-table>
+            </el-tab-pane>
+            <el-tab-pane label="Payload" name="Payload">
+              <div class="info">
+                <i
+                  class="iconfont icon-fuzhi"
+                  v-if="currentParams"
+                  v-copyToClipboard="currentParams"
+                ></i>
+                <div class="json-box">
+                  <pre id="json-inner"></pre>
+                </div>
+              </div>
+            </el-tab-pane>
+          </el-scrollbar>
+        </el-tabs>
       </div>
     </div>
   </div>
@@ -57,8 +75,6 @@ import { ref, nextTick } from "vue";
 import CryptoJS from "crypto-js";
 
 const listMap = ref([]);
-const currentParams = ref("");
-const current = ref(null);
 const keyWords = ref("");
 // 建立与 background.js 的通信连接
 const port = chrome.runtime.connect({
@@ -102,9 +118,10 @@ const decryptParams = (data, cookie) => {
 const initRecords = (records) => {
   const list = records.map((e, i) => {
     return {
-      ...e,
+      ...e.payload,
       i,
-      data: decryptParams(e.data, e.cookie),
+      data: decryptParams(e.payload.data, e.payload.cookie),
+      headers: e.headers,
     };
   });
   listMap.value = list;
@@ -117,7 +134,7 @@ const initRecords = (records) => {
 chrome.runtime.onMessage.addListener(({ type, data }, sender, sendResponse) => {
   switch (type) {
     case 1:
-      initRecords(data.records);
+      initRecords(data);
       break;
 
     default:
@@ -139,9 +156,13 @@ const handleClear = () => {
   chrome.runtime.sendMessage({ type: 2 });
 };
 
+const currentParams = ref("");
+const currentHeaders = ref({});
+const currentIndex = ref(null);
 const hanldeViewParams = (item, i) => {
   currentParams.value = JSON.stringify(item.data);
-  current.value = i;
+  currentHeaders.value = item.headers;
+  currentIndex.value = i;
   $("#json-inner").jsonViewer(
     {},
     {
@@ -201,11 +222,10 @@ const hanldeViewParams = (item, i) => {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 10px 0;
+  padding-top: 10px;
   overflow: hidden;
   .top {
     flex: 1;
-    border-bottom: 1px solid #ebeef5;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -254,7 +274,31 @@ const hanldeViewParams = (item, i) => {
     flex: 1;
     display: flex;
     overflow: hidden;
-    padding: 5px 0 5px 10px;
+    :deep(.el-tabs) {
+      --el-tabs-header-height: 26px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      .el-tabs__content {
+        padding: 5px;
+        flex: 1;
+        overflow-y: auto;
+      }
+      .el-tabs__item {
+        --el-font-size-base: 12px;
+        padding: 0 10px;
+        user-select: none;
+      }
+      .el-table__header-wrapper {
+        display: none;
+      }
+      .el-table__cell:nth-of-type(1) {
+        background: #f5f7fa;
+      }
+      .el-table .cell {
+        line-height: 16px;
+      }
+    }
     pre {
       font-family: system-ui, "PingFang SC", STHeiti, sans-serif !important;
       line-height: 1.2;

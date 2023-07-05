@@ -4,6 +4,7 @@ class Background {
     timer = null;
     stopTime = null; // 记录停止时间 1h后再次提示
     records = []; // 记录接口信息
+    headers = {}; // 请求头信息
     enableJira = false; // jira提醒开关
     jiraList = {}; // jira列表
     jiraMap = {};
@@ -24,13 +25,22 @@ class Background {
             enableJira !== undefined && (this.enableJira = enableJira.newValue);
         });
 
+        // 获取请求头信息
+        chrome.webRequest.onBeforeSendHeaders.addListener(
+            (details) => {
+                const { requestId, requestHeaders } = details;
+                this.headers[requestId] = requestHeaders;
+            },
+            { urls: ['<all_urls>'] },
+            ['requestHeaders']
+        );
         // 监听浏览器请求
         chrome.webRequest.onBeforeRequest.addListener(this.formatRequestBody, { urls: ['<all_urls>'], types: ['xmlhttprequest'] }, ['requestBody']);
 
         // 监听浏览器弹出窗口打开事件
         chrome.runtime.onConnect.addListener((port) => {
             if (port.name === 'popup') {
-                chrome.runtime.sendMessage({ type: 1, data: { records: this.filterRecords() } });
+                chrome.runtime.sendMessage({ type: 1, data: this.filterRecords() });
             }
         });
 
@@ -55,7 +65,7 @@ class Background {
                     // 修改管关键词
                     this.keyWords = data;
                     chrome.storage.local.set({ keyWords: data });
-                    chrome.runtime.sendMessage({ type: 1, data: { records: this.filterRecords(), keyWords: this.keyWords } });
+                    chrome.runtime.sendMessage({ type: 1, data: this.filterRecords() });
                     break;
 
                 case 99:
@@ -124,7 +134,8 @@ class Background {
      * @param {object} requestBody
      * @return {void}
      */
-    formatRequestBody = async ({ url, method, requestBody }) => {
+    formatRequestBody = async (details) => {
+        const { requestId, url, method, requestBody } = details;
         const cookie = await this.getCookie();
         let data = {};
         if (method === 'POST' || method === 'PUT') {
@@ -150,6 +161,7 @@ class Background {
         }
         if (url.includes(this.keyWords)) {
             this.records.push({
+                requestId,
                 method,
                 url,
                 data,
@@ -253,14 +265,19 @@ class Background {
     }
 
     filterRecords() {
+        const records = [];
         const res = [];
         this.records.forEach((e) => {
             if (e.url.includes(this.keyWords)) {
-                res.push(e);
+                records.push(e);
+                res.push({
+                    headers: this.headers[e.requestId],
+                    payload: e,
+                });
             }
         });
-        this.records = res.slice(-this.recordsLength);
-        return this.records;
+        this.records = records.slice(-this.recordsLength);
+        return res.slice(-this.recordsLength);
     }
 }
 

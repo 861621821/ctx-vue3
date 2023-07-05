@@ -43,16 +43,3 @@ $('body').on('click', '.xl-model .close', (e) => {
 $('body').on('click', '.login-btn', () => {
     $('.xl-model').remove();
 });
-
-// 添加vue根节点
-// const VueRoot = document.createElement('div');
-// VueRoot.id = 'xilan-vue-root';
-// document.body.appendChild(VueRoot);
-
-// const { createApp, h } = Vue;
-// const app = createApp({
-//     render() {
-//         return h('div', 'hello world');
-//     },
-// });
-// app.mount('#xilan-vue-root');
