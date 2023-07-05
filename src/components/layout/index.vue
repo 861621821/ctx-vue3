@@ -42,7 +42,7 @@ const currentMenu = ref("jiemi");
     margin: 5px 0;
   }
   .router-link-active {
-    color: #1eafb4;
+    color: var(--el-color-primary);
   }
   .logo {
     width: 40px;
