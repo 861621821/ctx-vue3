@@ -23,17 +23,19 @@
           <div class="th">Url</div>
         </div>
         <div id="list">
-          <div
-            class="row"
-            v-for="(item, i) in listMap"
-            :key="i"
-            :class="currentIndex === i ? 'selected' : ''"
-            @click="hanldeViewParams(item, i)"
-          >
-            <div class="td">{{ i + 1 }}</div>
-            <div class="td">{{ item.method }}</div>
-            <div class="td" :title="item.url">{{ item.url }}</div>
-          </div>
+          <el-scrollbar style="height: 100%">
+            <div
+              class="row"
+              v-for="(item, i) in listMap"
+              :key="i"
+              :class="currentIndex === i ? 'selected' : ''"
+              @click="hanldeViewParams(item, i)"
+            >
+              <div class="td">{{ i + 1 }}</div>
+              <div class="td">{{ item.method }}</div>
+              <div class="td" :title="item.url">{{ item.url }}</div>
+            </div>
+          </el-scrollbar>
         </div>
       </div>
       <div class="bottom">
@@ -236,7 +238,7 @@ const hanldeViewParams = (item, i) => {
     }
     #list {
       flex: 1;
-      overflow: auto;
+      overflow: hidden;
     }
     .thead,
     .row {

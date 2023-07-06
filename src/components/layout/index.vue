@@ -56,7 +56,7 @@ const currentMenu = ref("jiemi");
     cursor: pointer;
     transition: all 0.2s;
     &.active {
-      color: #1eafb4;
+      color: var(--el-color-primary);
     }
   }
   border-right: 1px solid #dcdfe6;
