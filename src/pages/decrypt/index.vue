@@ -23,17 +23,19 @@
           <div class="th">Url</div>
         </div>
         <div id="list">
-          <el-scrollbar style="height: 100%">
-            <div
-              class="row"
-              v-for="(item, i) in listMap"
-              :key="i"
-              :class="currentIndex === i ? 'selected' : ''"
-              @click="hanldeViewParams(item, i)"
-            >
-              <div class="td">{{ i + 1 }}</div>
-              <div class="td">{{ item.method }}</div>
-              <div class="td" :title="item.url">{{ item.url }}</div>
+          <el-scrollbar ref="scrollRef" style="height: 100%">
+            <div class="list-container" ref="containerRef">
+              <div
+                class="row"
+                v-for="(item, i) in listMap"
+                :key="i"
+                :class="currentIndex === i ? 'selected' : ''"
+                @click="hanldeViewParams(item, i)"
+              >
+                <div class="td">{{ i + 1 }}</div>
+                <div class="td">{{ item.method }}</div>
+                <div class="td" :title="item.url">{{ item.url }}</div>
+              </div>
             </div>
           </el-scrollbar>
         </div>
@@ -41,7 +43,11 @@
       <div class="bottom">
         <el-tabs type="border-card" model-value="Payload">
           <el-scrollbar height="100%">
-            <el-tab-pane label="Headers" name="Headers">
+            <el-tab-pane
+              :disabled="!currentParams"
+              label="Headers"
+              name="Headers"
+            >
               <el-table
                 v-if="currentHeaders.length"
                 :data="currentHeaders"
@@ -53,7 +59,11 @@
                 <el-table-column prop="value" label="Value" />
               </el-table>
             </el-tab-pane>
-            <el-tab-pane label="Payload" name="Payload">
+            <el-tab-pane
+              :disabled="!currentParams"
+              label="Payload"
+              name="Payload"
+            >
               <div class="info">
                 <i
                   class="iconfont icon-fuzhi"
@@ -73,8 +83,11 @@
 </template>
 
 <script setup>
-import { ref, nextTick } from "vue";
+import { ref, nextTick, onMounted } from "vue";
 import CryptoJS from "crypto-js";
+
+const scrollRef = ref(null);
+const containerRef = ref(null);
 
 const listMap = ref([]);
 const keyWords = ref("");
@@ -128,8 +141,7 @@ const initRecords = (records) => {
   });
   listMap.value = list;
   nextTick(() => {
-    var element = document.getElementById("list");
-    element.scrollTop = element.scrollHeight;
+    scrollRef.value.setScrollTop(containerRef.value.clientHeight);
   });
 };
 
@@ -307,13 +319,6 @@ const hanldeViewParams = (item, i) => {
     }
     .info {
       position: relative;
-      flex: 1;
-      overflow: hidden;
-      .json-box {
-        height: 100%;
-        width: 100%;
-        overflow: auto;
-      }
     }
     .icon-fuzhi {
       font-size: 16px;
