@@ -123,9 +123,10 @@ const decryptParams = (data, cookie) => {
       padding: CryptoJS.pad.Pkcs7,
     });
     const plaintext = decipher.toString(CryptoJS.enc.Utf8);
+    console.log(plaintext);
     return JSON.parse(plaintext);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return { msg: "解码异常", error };
   }
 };
@@ -156,10 +157,17 @@ chrome.runtime.onMessage.addListener(({ type, data }, sender, sendResponse) => {
   }
 });
 
+const currentParams = ref("");
+const currentHeaders = ref([]);
+const currentIndex = ref(-1);
+
 const handleFilter = () => {
   listMap.value = [];
   $("#json-renderer").html("");
   $("#json-inner").html("");
+  currentParams.value = "";
+  currentHeaders.value = [];
+  currentIndex.value = -1;
   chrome.runtime.sendMessage({ type: 7, data: keyWords.value });
 };
 
@@ -170,9 +178,6 @@ const handleClear = () => {
   chrome.runtime.sendMessage({ type: 2 });
 };
 
-const currentParams = ref("");
-const currentHeaders = ref({});
-const currentIndex = ref(null);
 const hanldeViewParams = (item, i) => {
   currentParams.value = JSON.stringify(item.data);
   currentHeaders.value = item.headers;
