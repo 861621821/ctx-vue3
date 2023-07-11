@@ -228,37 +228,40 @@ class Background {
         fetch(
             `https://jira.internal.pingxx.com/rest/gadget/1.0/issueTable/jql?num=10&tableContext=jira.table.cols.dashboard&addDefault=false&columnNames=issuetype&columnNames=issuekey&columnNames=summary&columnNames=assignee&columnNames=reporter&columnNames=status&columnNames=priority&enableSorting=true&paging=true&showActions=true&jql=assignee+%3D+currentUser()+AND+resolution+%3D+unresolved+ORDER+BY+priority+DESC%2C+created+ASC&sortBy=&startIndex=0&_=${Date.now()}`,
             { signal: controller.signal }
-        ).then(async (response) => {
-            clearTimeout(timeout);
-            timeout = null;
-            const data = await response.json();
-            if (data) {
-                data?.table && this.formatJira(data?.table);
-                this.stopTime = null;
-            } else {
-                // 未登陆 登陆过期
-                if (this.stopTime && Date.now() - this.stopTime < 1000 * 60 * 60) {
+        )
+            .then(async (response) => {
+                clearTimeout(timeout);
+                timeout = null;
+                if (response.status === 401) {
+                    // 未登陆 登陆过期
+                    if (this.stopTime && Date.now() - this.stopTime < 1000 * 60 * 60) {
+                        return;
+                    }
+                    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                        if (tabs[0] && !tabs[0].url.startsWith('chrome://')) {
+                            chrome.tabs.sendMessage(tabs[0].id, { type: 6 });
+                        }
+                    });
                     return;
                 }
-                chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-                    if (tabs[0] && !tabs[0].url.startsWith('chrome://')) {
-                        chrome.tabs.sendMessage(tabs[0].id, { type: 6 });
-                    }
-                });
-            }
-        });
-        // .catch((err) => {
-        //     clearTimeout(timeout);
-        //     timeout = null;
-        //     if (this.stopTime && Date.now() - this.stopTime < 1000 * 60 * 60) {
-        //         return;
-        //     }
-        //     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        //         if (tabs[0] && !tabs[0].url.startsWith('chrome://')) {
-        //             chrome.tabs.sendMessage(tabs[0].id, { type: 6 });
-        //         }
-        //     });
-        // });
+                const data = await response.json();
+                if (data?.table) {
+                    this.formatJira(data?.table);
+                    this.stopTime = null;
+                }
+            })
+            .catch((err) => {
+                // clearTimeout(timeout);
+                // timeout = null;
+                // if (this.stopTime && Date.now() - this.stopTime < 1000 * 60 * 60) {
+                //     return;
+                // }
+                // chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                //     if (tabs[0] && !tabs[0].url.startsWith('chrome://')) {
+                //         chrome.tabs.sendMessage(tabs[0].id, { type: 6 });
+                //     }
+                // });
+            });
     }
 
     filterRecords() {
