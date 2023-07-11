@@ -56,7 +56,7 @@
                 style="width: 100%"
               >
                 <el-table-column prop="name" label="Name" width="120" />
-                <el-table-column prop="value" label="Value" />
+                <el-table-column prop="value" label="Value" width="648" />
               </el-table>
             </el-tab-pane>
             <el-tab-pane
@@ -123,7 +123,6 @@ const decryptParams = (data, cookie) => {
       padding: CryptoJS.pad.Pkcs7,
     });
     const plaintext = decipher.toString(CryptoJS.enc.Utf8);
-    console.log(plaintext);
     return JSON.parse(plaintext);
   } catch (error) {
     console.error(error);
