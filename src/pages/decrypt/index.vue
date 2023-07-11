@@ -141,7 +141,8 @@ const initRecords = (records) => {
   });
   listMap.value = list;
   nextTick(() => {
-    scrollRef.value.setScrollTop(containerRef.value.clientHeight);
+    scrollRef.value &&
+      scrollRef.value.setScrollTop(containerRef.value.clientHeight);
   });
 };
 
