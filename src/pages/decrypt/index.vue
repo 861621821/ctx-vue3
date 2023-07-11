@@ -127,7 +127,7 @@ const decryptParams = (data, cookie) => {
     return JSON.parse(plaintext);
   } catch (error) {
     console.error(error);
-    return { msg: "解码异常", error };
+    return { msg: "解码异常，请重试", error };
   }
 };
 
@@ -262,6 +262,7 @@ const hanldeViewParams = (item, i) => {
       display: flex;
       padding: 5px 0;
       cursor: pointer;
+      transition: background 0.2s;
       &:nth-child(even) {
         background: #f6f6f6;
       }
@@ -298,6 +299,8 @@ const hanldeViewParams = (item, i) => {
       width: 100%;
       display: flex;
       flex-direction: column;
+      border-radius: 4px;
+      overflow: hidden;
       .el-tabs__content {
         padding: 5px;
         flex: 1;
