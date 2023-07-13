@@ -251,11 +251,12 @@ const hanldeViewParams = (item, i) => {
     padding-bottom: 5px;
     .thead {
       padding: 5px 0;
-      background: #f2f2f2;
+      background: var(--el-fill-color-light);
     }
     #list {
       flex: 1;
       overflow: hidden;
+      color: #606266;
     }
     .thead,
     .row {
@@ -264,7 +265,10 @@ const hanldeViewParams = (item, i) => {
       cursor: pointer;
       transition: background 0.2s;
       &:nth-child(even) {
-        background: #f6f6f6;
+        background: #f7f7f7;
+      }
+      &:hover {
+        background: #c2e7ea7c;
       }
       &.selected {
         background: #c2e7ea;
