@@ -102,6 +102,8 @@ watch(
   height: 100%;
   display: flex;
   flex-direction: column;
+  border-radius: 4px;
+  overflow: hidden;
   :deep(.el-tabs__content) {
     flex: 1;
     .el-tab-pane {
