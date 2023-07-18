@@ -86,7 +86,7 @@
 </template>
 
 <script setup>
-import { ref, nextTick, onMounted } from "vue";
+import { ref, nextTick } from "vue";
 import CryptoJS from "crypto-js";
 
 const scrollRef = ref(null);
@@ -181,7 +181,7 @@ const hanldeViewParams = (item, i) => {
   currentParams.value = item.data;
   currentHeaders.value = item.headers;
   currentIndex.value = i;
-  setTimeout(() => {
+  nextTick(() => {
     const reg1 = /^[1-9][0-9]{9}$/gm;
     const reg2 = /^[1-9][0-9]{12}$/gm;
 
