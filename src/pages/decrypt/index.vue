@@ -70,9 +70,12 @@
                   v-if="currentParams"
                   v-copyToClipboard="currentParams"
                 ></i>
-                <div class="json-box">
-                  <pre id="json-inner"></pre>
-                </div>
+                <vue-json-pretty
+                  v-if="currentParams"
+                  :data="currentParams"
+                  :showLine="false"
+                  :showDoubleQuotes="false"
+                />
               </div>
             </el-tab-pane>
           </el-scrollbar>
@@ -125,7 +128,7 @@ const decryptParams = (data, cookie) => {
     const plaintext = decipher.toString(CryptoJS.enc.Utf8);
     return JSON.parse(plaintext);
   } catch (error) {
-    console.error(error);
+    console.error(error, data, cookie);
     return { msg: "解码异常，请重试", error };
   }
 };
@@ -157,15 +160,13 @@ chrome.runtime.onMessage.addListener(({ type, data }, sender, sendResponse) => {
   }
 });
 
-const currentParams = ref("");
+const currentParams = ref(null);
 const currentHeaders = ref([]);
 const currentIndex = ref(-1);
 
 const handleFilter = () => {
   listMap.value = [];
-  $("#json-renderer").html("");
-  $("#json-inner").html("");
-  currentParams.value = "";
+  currentParams.value = null;
   currentHeaders.value = [];
   currentIndex.value = -1;
   chrome.runtime.sendMessage({ type: 7, data: keyWords.value });
@@ -173,48 +174,24 @@ const handleFilter = () => {
 
 const handleClear = () => {
   listMap.value = [];
-  $("#json-renderer").html("");
-  $("#json-inner").html("");
   chrome.runtime.sendMessage({ type: 2 });
 };
 
 const hanldeViewParams = (item, i) => {
-  currentParams.value = JSON.stringify(item.data);
+  currentParams.value = item.data;
   currentHeaders.value = item.headers;
   currentIndex.value = i;
-  $("#json-inner").jsonViewer(
-    {},
-    {
-      collapsed: $("#collapsed").is(":checked"),
-      withQuotes: $("#with-quotes").is(":checked"),
-    }
-  );
   setTimeout(() => {
-    const i = $(this).data("index");
-    $("#json-inner").jsonViewer(item.data, {
-      collapsed: $("#collapsed").is(":checked"),
-      withQuotes: $("#with-quotes").is(":checked"),
-    });
     const reg1 = /^[1-9][0-9]{9}$/gm;
     const reg2 = /^[1-9][0-9]{12}$/gm;
-    $("#json-inner")
-      .find(".json-string")
-      .each((i, e) => {
-        const unix = $(e).text().replace(/['"]/g, "");
-        if (reg1.test(unix) || reg2.test(unix)) {
-          const date = new Date(Number(unix));
-          $(e).attr("title", date.toLocaleString());
-        }
-      });
-    $("#json-inner")
-      .find(".json-literal")
-      .each((i, e) => {
-        const unix = $(e).text().replace(/['"]/g, "");
-        if (reg1.test(unix) || reg2.test(unix)) {
-          const date = new Date(Number(unix));
-          $(e).attr("title", date.toLocaleString());
-        }
-      });
+
+    document.querySelectorAll(".vjs-value").forEach((e) => {
+      const text = e.innerText.replace(/"/g, "");
+      if (reg1.test(text) || reg2.test(text)) {
+        const date = new Date(Number(text));
+        e.setAttribute("title", date.toLocaleString());
+      }
+    });
   });
 };
 </script>
@@ -325,10 +302,6 @@ const hanldeViewParams = (item, i) => {
         line-height: 16px;
       }
     }
-    pre {
-      font-family: system-ui, "PingFang SC", STHeiti, sans-serif !important;
-      line-height: 1.2;
-    }
     .info {
       position: relative;
     }
@@ -339,6 +312,7 @@ const hanldeViewParams = (item, i) => {
       top: 5px;
       cursor: pointer;
       color: #999;
+      z-index: 999;
       &:hover {
         color: #333;
       }

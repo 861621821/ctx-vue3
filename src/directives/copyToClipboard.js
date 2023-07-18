@@ -1,7 +1,11 @@
 // 使用方式：v-copyToClipboard="copyText"
 export default {
     mounted(el, binding, vnode) {
-        el.$value = binding.value;
+        if (typeof binding.value !== 'string') {
+            el.$value = JSON.stringify(binding.value);
+        } else {
+            el.$value = binding.value;
+        }
         el.handler = () => {
             if (!el.$value) {
                 console.log('无复制内容');

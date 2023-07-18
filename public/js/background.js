@@ -136,7 +136,10 @@ class Background {
      */
     formatRequestBody = async (details) => {
         const { requestId, url, method, requestBody } = details;
-        const cookie = await this.getCookie();
+        let cookie = await this.getCookie();
+        if (!cookie) {
+            cookie = await this.getCookie();
+        }
         let data = {};
         if (method === 'POST' || method === 'PUT') {
             const buffer = requestBody && requestBody.raw && requestBody.raw[0].bytes;
@@ -181,7 +184,6 @@ class Background {
         keys.length &&
             chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
                 if (tabs[0] && !tabs[0].url.startsWith('chrome://')) {
-                    console.log(tabs, tabs[0].id);
                     chrome.tabs.sendMessage(tabs[0].id, { type: 3, data });
                 }
             });

@@ -42,3 +42,16 @@ html {
     display: flex;
     color: #303133;
 }
+
+.vjs-tree {
+    font-family: system-ui, 'PingFang SC', STHeiti, sans-serif !important;
+    line-height: 1.2 !important;
+    font-size: 12px !important;
+    .vjs-tree-node.is-highlight,
+    .vjs-tree-node:hover {
+        background: unset !important;
+    }
+    .vjs-tree-node {
+        line-height: 18px;
+    }
+}
