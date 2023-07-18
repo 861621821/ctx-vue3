@@ -12,7 +12,12 @@
             ></textarea>
           </div>
           <div class="json-json-box">
-            <pre id="json-json-inner"></pre>
+            <vue-json-pretty
+              v-if="json"
+              :data="json"
+              :showLine="false"
+              :showDoubleQuotes="false"
+            />
           </div>
         </div>
       </el-tab-pane>
@@ -42,35 +47,25 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, nextTick } from "vue";
 
 // json格式化
-const jsonStr = ref("");
-const onJsonStrChange = () => {
-  $("#json-json-inner").jsonViewer(JSON.parse(jsonStr.value), {
-    collapsed: $("#collapsed").is(":checked"),
-    withQuotes: $("#with-quotes").is(":checked"),
+const json = ref(null);
+const onJsonStrChange = (e) => {
+  console.log(e.target.value);
+  json.value = JSON.parse(e.target.value);
+  nextTick(() => {
+    const reg1 = /^[1-9][0-9]{9}$/gm;
+    const reg2 = /^[1-9][0-9]{12}$/gm;
+
+    document.querySelectorAll(".vjs-value").forEach((e) => {
+      const text = e.innerText.replace(/"/g, "");
+      if (reg1.test(text) || reg2.test(text)) {
+        const date = new Date(Number(text));
+        e.setAttribute("title", date.toLocaleString());
+      }
+    });
   });
-  const reg1 = /^[1-9][0-9]{9}$/gm;
-  const reg2 = /^[1-9][0-9]{12}$/gm;
-  $("#json-json-inner")
-    .find(".json-string")
-    .each((i, e) => {
-      const unix = $(e).text().replace(/['"]/g, "");
-      if (reg1.test(unix) || reg2.test(unix)) {
-        const date = new Date(Number(unix));
-        $(e).attr("title", date.toLocaleString());
-      }
-    });
-  $("#json-json-inner")
-    .find(".json-literal")
-    .each((i, e) => {
-      const unix = $(e).text().replace(/['"]/g, "");
-      if (reg1.test(unix) || reg2.test(unix)) {
-        const date = new Date(Number(unix));
-        $(e).attr("title", date.toLocaleString());
-      }
-    });
 };
 
 // 时间转换
