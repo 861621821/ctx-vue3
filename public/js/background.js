@@ -40,7 +40,11 @@ class Background {
         // 监听浏览器弹出窗口打开事件
         chrome.runtime.onConnect.addListener((port) => {
             if (port.name === 'popup') {
-                chrome.runtime.sendMessage({ type: 1, data: this.filterRecords() });
+                try {
+                    chrome.runtime.sendMessage({ type: 1, data: this.filterRecords() });
+                } catch (error) {
+                    console.log(error);
+                }
             }
         });
 
@@ -65,7 +69,11 @@ class Background {
                     // 修改管关键词
                     this.keyWords = data;
                     chrome.storage.local.set({ keyWords: data });
-                    chrome.runtime.sendMessage({ type: 1, data: this.filterRecords() });
+                    try {
+                        chrome.runtime.sendMessage({ type: 1, data: this.filterRecords() });
+                    } catch (error) {
+                        console.log(error);
+                    }
                     break;
 
                 case 99:
@@ -184,7 +192,11 @@ class Background {
         keys.length &&
             chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
                 if (tabs[0] && !tabs[0].url.startsWith('chrome://')) {
-                    chrome.tabs.sendMessage(tabs[0].id, { type: 3, data });
+                    try {
+                        chrome.tabs.sendMessage(tabs[0].id, { type: 3, data });
+                    } catch (error) {
+                        console.log(error);
+                    }
                 }
             });
     }
@@ -241,7 +253,11 @@ class Background {
                     }
                     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
                         if (tabs[0] && !tabs[0].url.startsWith('chrome://')) {
-                            chrome.tabs.sendMessage(tabs[0].id, { type: 6 });
+                            try {
+                                chrome.tabs.sendMessage(tabs[0].id, { type: 6 });
+                            } catch (error) {
+                                console.log(error);
+                            }
                         }
                     });
                     return;
