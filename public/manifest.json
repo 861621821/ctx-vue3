@@ -22,13 +22,13 @@
         }
     },
     "permissions": ["tabs", "storage", "webNavigation", "webRequest", "cookies", "notifications"],
-    "host_permissions": ["<all_urls>"],
+    "host_permissions": ["http://*/*", "https://*/*", "<all_urls>"],
     "background": {
         "service_worker": "js/background.js"
     },
     "content_scripts": [
         {
-            "matches": ["<all_urls>"],
+            "matches": ["http://*/*", "https://*/*", "<all_urls>"],
             "css": ["style/content.css"],
             "js": ["js/jquery-3.6.0.min.js", "js/content.js"]
         }

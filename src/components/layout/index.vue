@@ -11,14 +11,26 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
 
-const menus = ref([
-  { name: "jiemi", path: "/decrypt", icon: "icon-jiemi" },
-  { name: "tools", path: "/tools", icon: "icon-gongju" },
-  { name: "setting", path: "/setting", icon: "icon-setting" },
-]);
-const currentMenu = ref("jiemi");
+const {
+  options: { routes },
+} = useRouter();
+
+const menus = computed(() => {
+  let res = [];
+  routes.forEach((item) => {
+    if (item.meta?.isMenu) {
+      res.push({
+        name: item.path.replace("/", ""),
+        path: item.path,
+        icon: item.meta?.icon,
+      });
+    }
+  });
+  return res;
+});
 </script>
 
 <style lang="scss" scoped>

@@ -6,6 +6,7 @@ chrome.runtime.sendMessage类型
  - 5: jira错误 停止查询
  - 6: 登陆异常
  - 7: 向background发送过滤关键字
+ - 8: 向content发送账号信息
  - 99: 打开新标签
 
 

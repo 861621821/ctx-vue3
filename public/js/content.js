@@ -1,5 +1,6 @@
 const div = $(`<div class="xl-model"><div class="xl-jira"></div></div>`);
-chrome.runtime.onMessage.addListener(({ type, data }, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener(({ type, data }) => {
+    console.log(type, data);
     if (type === 3 && data.length) {
         const newUrl = chrome.runtime.getURL('icons/new.png');
         const as = data.map((e) => `<a data-jira="true" class="jira-item" href="${e.key}" target="_blank" title="${e.value}">${e.value}</a>`);
@@ -22,6 +23,7 @@ chrome.runtime.onMessage.addListener(({ type, data }, sender, sendResponse) => {
         `;
         $('body').append(div);
         $('.xl-jira').html(inner);
+    } else if (type === 8) {
     }
 });
 
