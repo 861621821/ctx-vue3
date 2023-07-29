@@ -1,0 +1,18 @@
+[
+    {
+        "vibe": "DEV",
+        "data": [
+            { "account": "18700000000", "pwd": "a1234567", "desc": "系统账号" },
+            { "account": "18724021828", "pwd": "1234", "desc": "KDT" },
+            { "account": "18724021001", "pwd": "1234", "desc": "YY" },
+            { "account": "18722000003", "pwd": "1234qwer", "desc": "多商户" },
+            { "account": "19000000000", "pwd": "abcd1234", "desc": "企业账号" },
+            { "account": "17100000000", "pwd": "abcd1234", "desc": "大商户账号" },
+            { "account": "13000000004", "pwd": "abcd1234", "desc": "大商户子平台账号" }
+        ]
+    },
+    {
+        "vibe": "SIT",
+        "data": [{ "account": "18521735360", "pwd": "ybg123456", "desc": "" }]
+    }
+]

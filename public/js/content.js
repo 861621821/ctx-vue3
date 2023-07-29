@@ -1,29 +1,59 @@
+function notifyJira(data) {
+    const newUrl = chrome.runtime.getURL('icons/new.png');
+    const as = data.map((e) => `<a data-jira="true" class="jira-item" href="${e.key}" target="_blank" title="${e.value}">${e.value}</a>`);
+    const inner = `
+        <i class="close"></i>
+        <div class="xl-msg">
+          <div class="msg-title"><img src="${newUrl}">你有<span> ${data.length} </span>条新的Jira任务</div>
+          <div class="msg-content">${as.join('')}</div>
+        </div>
+      `;
+    $('body').append(div);
+    $('.xl-jira').html(inner);
+}
+
+function notifyLogin() {
+    const inner = `
+        <i class="close"></i>
+        <div class="xl-login">
+          <div>Jira未登陆或登陆已过期</div>
+          <div class="login-btn"><a href="https://jira.internal.pingxx.com/login.jsp" target="_blank">重新登陆</a></div>
+        </div>
+      `;
+    $('body').append(div);
+    $('.xl-jira').html(inner);
+}
+
+function clearAllCookies() {
+    var cookies = document.cookie.split(';');
+    for (var i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i];
+        var eqPos = cookie.indexOf('=');
+        var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+        document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
+    }
+}
+
+function autoInput({ account, pwd }) {
+    if (window.location.pathname !== 'login') {
+        const inputs = $('.login-form-item input');
+        inputs.eq(0).val(account);
+        inputs.eq(1).val(pwd);
+        inputs.eq(2).val('888888');
+        document.querySelectorAll('.login-form-item input').forEach((e) => {
+            e.dispatchEvent(new Event('input'));
+        });
+    }
+}
+
 const div = $(`<div class="xl-model"><div class="xl-jira"></div></div>`);
 chrome.runtime.onMessage.addListener(({ type, data }) => {
-    console.log(type, data);
     if (type === 3 && data.length) {
-        const newUrl = chrome.runtime.getURL('icons/new.png');
-        const as = data.map((e) => `<a data-jira="true" class="jira-item" href="${e.key}" target="_blank" title="${e.value}">${e.value}</a>`);
-        const inner = `
-          <i class="close"></i>
-          <div class="xl-msg">
-            <div class="msg-title"><img src="${newUrl}">你有<span> ${data.length} </span>条新的Jira任务</div>
-            <div class="msg-content">${as.join('')}</div>
-          </div>
-        `;
-        $('body').append(div);
-        $('.xl-jira').html(inner);
+        notifyJira(data);
     } else if (type === 6) {
-        const inner = `
-          <i class="close"></i>
-          <div class="xl-login">
-            <div>Jira未登陆或登陆已过期</div>
-            <div class="login-btn"><a href="https://jira.internal.pingxx.com/login.jsp" target="_blank">重新登陆</a></div>
-          </div>
-        `;
-        $('body').append(div);
-        $('.xl-jira').html(inner);
-    } else if (type === 8) {
+        notifyLogin();
+    } else if (type === 20) {
+        autoInput(data);
     }
 });
 
