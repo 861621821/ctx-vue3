@@ -51,6 +51,7 @@ onMounted(() => {
 .account-container {
   .vibe-title {
     padding: 10px 0 10px 10px;
+    font-weight: bold;
   }
   :deep(.el-table) {
     font-size: 12px;
