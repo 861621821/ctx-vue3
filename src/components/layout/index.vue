@@ -51,7 +51,7 @@ const menus = computed(() => {
   a {
     color: #333;
     text-decoration: none;
-    margin: 5px 0;
+    margin: 8px 0;
   }
   .router-link-active {
     color: var(--el-color-primary);

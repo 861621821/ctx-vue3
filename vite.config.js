@@ -43,10 +43,4 @@ export default defineConfig({
     build: {
         watch: true,
     },
-    rollupInputOptions: {
-        input: {
-            global: '@/utils/global.js', // 添加这一行导入全局脚本文件
-            viewer: '@/assets/viewJson/jquery.json-viewer.js',
-        },
-    },
 });

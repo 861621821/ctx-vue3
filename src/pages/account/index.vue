@@ -13,11 +13,7 @@
             ></el-table-column>
             <el-table-column prop="action" align="center" width="100px">
               <template #default="scope">
-                <el-tooltip effect="dark" content="填入" placement="top">
-                  <el-icon @click="handleLogin(scope.row)"
-                    ><Promotion
-                  /></el-icon>
-                </el-tooltip>
+                <el-icon @click="handleLogin(scope.row)"><Promotion /></el-icon>
               </template>
             </el-table-column>
           </el-table>
