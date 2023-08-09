@@ -88,6 +88,7 @@
 <script setup>
 import { ref, nextTick } from "vue";
 import CryptoJS from "crypto-js";
+import { useUserStore } from "@/store/user.js";
 
 const scrollRef = ref(null);
 const containerRef = ref(null);
@@ -115,6 +116,7 @@ chrome.storage.local.get("keyWords", (res) => {
 // };
 
 // 解密
+const { setNewTodo } = useUserStore();
 const decryptParams = (data, cookie) => {
   if (!data.enc_data) {
     return data;
@@ -128,6 +130,7 @@ const decryptParams = (data, cookie) => {
     const plaintext = decipher.toString(CryptoJS.enc.Utf8);
     return JSON.parse(plaintext);
   } catch (error) {
+    setNewTodo(true);
     console.error(error, data, cookie);
     return { msg: "解码异常，请重试", error };
   }

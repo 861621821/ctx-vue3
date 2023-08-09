@@ -9,7 +9,7 @@ class Background {
     jiraList = {}; // jira列表
     jiraMap = {};
     keyWords = '';
-    recordsLength = 50; // 记录条数
+    recordsLength = 20; // 记录条数
 
     constructor() {
         chrome.storage.local.get('keyWords', (res) => {

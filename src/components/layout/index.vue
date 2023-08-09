@@ -1,6 +1,8 @@
 <template>
   <div class="side-bar-container">
-    <img src="@/assets/image/logo.png" class="logo" alt="" srcset="" />
+    <el-badge :is-dot="userStore.newTodo">
+      <img src="@/assets/image/logo.png" class="logo" alt="" srcset="" />
+    </el-badge>
     <router-link :to="menu.path" v-for="menu in menus" :key="menu.name">
       <i class="iconfont" :class="menu.icon"></i>
     </router-link>
@@ -11,8 +13,11 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { computed } from "vue";
 import { useRouter } from "vue-router";
+import { useUserStore } from "@/store/user.js";
+
+const userStore = useUserStore();
 
 const {
   options: { routes },
