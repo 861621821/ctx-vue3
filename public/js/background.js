@@ -28,7 +28,10 @@ class Background {
         // 获取请求头信息
         chrome.webRequest.onBeforeSendHeaders.addListener(
             (details) => {
-                const { requestId, requestHeaders } = details;
+                const { requestId, requestHeaders, method } = details;
+                if (method === 'OPTIONS') {
+                    return;
+                }
                 this.headers[requestId] = requestHeaders;
             },
             { urls: ['<all_urls>'] },
@@ -144,6 +147,9 @@ class Background {
      */
     formatRequestBody = async (details) => {
         const { requestId, url, method, requestBody } = details;
+        if (method === 'OPTIONS') {
+            return;
+        }
         let cookie = await this.getCookie();
         if (!cookie) {
             cookie = await this.getCookie();
