@@ -15,7 +15,8 @@
         "vibe": "SIT",
         "data": [
             { "account": "18700000000", "pwd": "abcd1234!", "desc": "系统账号" },
-            { "account": "18521735360", "pwd": "ybg123456", "desc": "" }
+            { "account": "18521735360", "pwd": "ybg123456", "desc": "" },
+            { "account": "14816459079", "pwd": "abcd1234", "desc": "大商户" }
         ]
     }
 ]
