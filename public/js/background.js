@@ -10,6 +10,7 @@ class Background {
     jiraMap = {};
     keyWords = '';
     recordsLength = 20; // 记录条数
+    juejinTabId = null;
 
     constructor() {
         chrome.storage.local.get('keyWords', (res) => {
@@ -79,6 +80,10 @@ class Background {
                     }
                     break;
 
+                case 8:
+                    chrome.tabs.remove(this.juejinTabId);
+                    break;
+
                 case 99:
                     // 打开新标签
                     chrome.tabs.create({
@@ -105,6 +110,7 @@ class Background {
                 this.timer = setInterval(() => {
                     this.queryJira();
                 }, 15000);
+                this.juejin();
             } else {
                 clearInterval(this.timer);
             }
@@ -112,6 +118,7 @@ class Background {
 
         setTimeout(() => {
             this.queryJira();
+            this.juejin();
             this.timer = setInterval(() => {
                 this.queryJira();
             }, 15000);
@@ -302,6 +309,26 @@ class Background {
         });
         this.records = records.slice(-this.recordsLength);
         return res.slice(-this.recordsLength);
+    }
+
+    /**
+     * @description: 掘金签到
+     * @return {*}
+     */
+    async juejin() {
+        const today = new Date().toLocaleDateString();
+        const { signInDay = '' } = await chrome.storage.local.get('signInDay');
+        if (signInDay !== today) {
+            chrome.storage.local.set({ signInDay: today });
+            chrome.tabs.create(
+                {
+                    url: 'https://juejin.cn/user/center/signin?from=main_page',
+                },
+                (tab) => {
+                    this.juejinTabId = tab.id;
+                }
+            );
+        }
     }
 }
 
