@@ -5,7 +5,7 @@
             {
                 "vibe": "DEV",
                 "data": [
-                    { "account": "18700000000", "pwd": "a1234567", "desc": "系统账号" },
+                    { "account": "18700000000", "pwd": "abcd1234!", "desc": "系统账号" },
                     { "account": "18724021828", "pwd": "1234", "desc": "KDT" },
                     { "account": "18724021001", "pwd": "1234", "desc": "YY" },
                     { "account": "18722000003", "pwd": "1234qwer", "desc": "多商户" },
