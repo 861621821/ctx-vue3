@@ -53,10 +53,9 @@
                 :data="currentHeaders"
                 size="small"
                 border
-                style="width: 100%"
               >
                 <el-table-column prop="name" label="Name" width="120" />
-                <el-table-column prop="value" label="Value" width="648" />
+                <el-table-column prop="value" label="Value" />
               </el-table>
             </el-tab-pane>
             <el-tab-pane

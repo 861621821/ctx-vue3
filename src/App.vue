@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-import Layout from "@/components/layout/index.vue";
+import Layout from "@/layout/index.vue";
 </script>
 
 <style lang="scss">
