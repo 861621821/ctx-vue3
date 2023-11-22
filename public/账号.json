@@ -5,21 +5,23 @@
             {
                 "vibe": "DEV",
                 "data": [
-                    { "account": "18700000000", "pwd": "abcd1234!", "desc": "系统账号" },
-                    { "account": "18724021828", "pwd": "1234", "desc": "KDT" },
-                    { "account": "18724021001", "pwd": "1234", "desc": "YY" },
-                    { "account": "18722000003", "pwd": "1234qwer", "desc": "多商户" },
-                    { "account": "19000000000", "pwd": "abcd1234", "desc": "企业账号" },
-                    { "account": "17100000000", "pwd": "abcd1234", "desc": "大商户账号" },
-                    { "account": "13000000004", "pwd": "abcd1234", "desc": "大商户子平台账号" }
+                    { "account": "18700000000", "pwd": "abcd1234!", "role": "超级管理员", "desc": "系统账号" },
+                    { "account": "18724021828", "pwd": "abcd", "role": "平台", "desc": "KDT-平台" },
+                    { "account": "13612345678", "pwd": "abcd1234", "role": "商户", "desc": "KDT-商户" },
+                    { "account": "18724021001", "pwd": "1234", "role": "", "desc": "YY-平台" },
+                    { "account": "18722000003", "pwd": "1234qwer", "role": "", "desc": "多商户" },
+                    { "account": "19000000000", "pwd": "abcd1234", "role": "", "desc": "企业账号" },
+                    { "account": "17100000000", "pwd": "abcd1234", "role": "", "desc": "大商户账号" },
+                    { "account": "13000000004", "pwd": "abcd1234", "role": "", "desc": "大商户子平台账号" }
                 ]
             },
             {
                 "vibe": "SIT",
                 "data": [
-                    { "account": "18700000000", "pwd": "abcd1234!", "desc": "系统账号" },
-                    { "account": "18521735360", "pwd": "ybg123456", "desc": "" },
-                    { "account": "14816459079", "pwd": "abcd1234", "desc": "大商户" }
+                    { "account": "18700000000", "pwd": "abcd1234!", "role": "", "desc": "系统账号" },
+                    { "account": "18521735360", "pwd": "ybg123456", "role": "", "desc": "" },
+                    { "account": "14816459079", "pwd": "abcd1234", "role": "", "desc": "大商户" },
+                    { "account": "18827359993", "pwd": "abcd1234", "role": "", "desc": "平台" }
                 ]
             }
         ]
@@ -30,11 +32,11 @@
             {
                 "vibe": "DEV",
                 "data": [
-                    { "platform": "lt", "account": "17621235278", "pwd": "1234", "org": 1, "desc": "连通" },
-                    { "platform": "lt", "account": "16111111111", "pwd": "1234", "org": 2, "desc": "银行总行管理员" },
-                    { "platform": "lt", "account": "16111111112", "pwd": "1234", "org": 2, "desc": "银行总行普通用户" },
-                    { "platform": "lt", "account": "15172245536", "pwd": "1234", "org": 2, "desc": "银行分行管理员" },
-                    { "platform": "lt", "account": "15771186647", "pwd": "1234", "org": 3, "desc": "平台账号" }
+                    { "role": "lt", "account": "17621235278", "pwd": "1234", "org": 1, "desc": "连通" },
+                    { "role": "lt", "account": "16111111111", "pwd": "1234", "org": 2, "desc": "银行总行管理员" },
+                    { "role": "lt", "account": "16111111112", "pwd": "1234", "org": 2, "desc": "银行总行普通用户" },
+                    { "role": "lt", "account": "15172245536", "pwd": "1234", "org": 2, "desc": "银行分行管理员" },
+                    { "role": "lt", "account": "15771186647", "pwd": "1234", "org": 3, "desc": "平台账号" }
                 ]
             },
             {
