@@ -103,16 +103,10 @@ chrome.storage.local.get("keyWords", (res) => {
   keyWords.value = res.keyWords || "";
 });
 
-// 加密
-// const encryptParams = (params, cookie) => {
-//   const data = CryptoJS.enc.Utf8.parse(params);
-//   const key = CryptoJS.enc.Utf8.parse(cookie);
-//   const encrypted = CryptoJS.AES.encrypt(data, key, {
-//     mode: CryptoJS.mode.ECB,
-//     padding: CryptoJS.pad.Pkcs7,
-//   });
-//   return encrypted.toString();
-// };
+// fix 解密报错
+const filterSpace = (str) => {
+  return str.replace(/\n*$/g, "").replace(/\n/g, "").replace(/\s/g, "");
+};
 
 // 解密
 const { setNewTodo } = useUserStore();
@@ -122,7 +116,7 @@ const decryptParams = (data, cookie) => {
   }
   try {
     const key = CryptoJS.enc.Utf8.parse(cookie);
-    const decipher = CryptoJS.AES.decrypt(data.enc_data, key, {
+    const decipher = CryptoJS.AES.decrypt(filterSpace(data.enc_data), key, {
       mode: CryptoJS.mode.ECB,
       padding: CryptoJS.pad.Pkcs7,
     });
