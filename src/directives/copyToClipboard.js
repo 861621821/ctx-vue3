@@ -25,7 +25,7 @@ export default {
             textarea.select();
             const result = document.execCommand('Copy');
             if (result) {
-                console.log('复制成功');
+                ElMessage.success('复制成功');
             }
             document.body.removeChild(textarea);
         };
