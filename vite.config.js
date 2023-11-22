@@ -42,5 +42,16 @@ export default defineConfig({
     ],
     build: {
         watch: true,
+        rollupOptions: {
+            treeshake: true,
+            output: {
+                manualChunks: {
+                    vue: ['vue'],
+                    elementPlus: ['element-plus'],
+                    pinia: ['pinia'],
+                    vueRouter: ['vue-router'],
+                },
+            },
+        },
     },
 });
