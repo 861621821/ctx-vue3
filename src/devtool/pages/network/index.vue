@@ -75,7 +75,7 @@
                       <i
                         class="iconfont icon-fuzhi"
                         style="margin-left: 8px"
-                        v-if="scope.row.name === 'request-id'"
+                        v-if="scope.row.name.toLowerCase() === 'request-id'"
                         v-copyToClipboard="scope.row.value"
                       ></i>
                     </div>
@@ -178,7 +178,7 @@ const initRecord = (record) => {
     }
   }
   const cookie = record.headers.find(
-    (e) => e.name?.toLocaleLowerCase() === "security-token"
+    (e) => e.name?.toLowerCase() === "security-token"
   )?.value;
   recordsList.value.push({
     ...record,
