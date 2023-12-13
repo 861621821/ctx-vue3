@@ -36,14 +36,18 @@ export default defineConfig({
                 }),
             ],
         }),
-        zipPack({
-            outDir: './',
-        }),
+        // zipPack({
+        //     outDir: './',
+        // }),
     ],
     build: {
         watch: true,
         rollupOptions: {
             treeshake: true,
+            input: {
+                devtool: path.resolve(__dirname, '/src/devtool/devtool.html'),
+                popup: path.resolve(__dirname, '/src/popup/popup.html'),
+            },
             output: {
                 manualChunks: {
                     vue: ['vue'],

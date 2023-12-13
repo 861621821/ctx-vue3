@@ -6,7 +6,7 @@
                 "vibe": "DEV",
                 "data": [
                     { "account": "18700000000", "pwd": "abcd1234!", "role": "超级管理员", "desc": "系统账号" },
-                    { "account": "18724021828", "pwd": "abcd", "role": "平台", "desc": "KDT-平台" },
+                    { "account": "18724021828", "pwd": "1234", "role": "平台", "desc": "KDT-平台" },
                     { "account": "13612345678", "pwd": "abcd1234", "role": "商户", "desc": "KDT-商户" },
                     { "account": "18724021001", "pwd": "1234", "role": "", "desc": "YY-平台" },
                     { "account": "18722000003", "pwd": "1234qwer", "role": "", "desc": "多商户" },
@@ -21,7 +21,8 @@
                     { "account": "18700000000", "pwd": "abcd1234!", "role": "", "desc": "系统账号" },
                     { "account": "18521735360", "pwd": "ybg123456", "role": "", "desc": "" },
                     { "account": "14816459079", "pwd": "abcd1234", "role": "", "desc": "大商户" },
-                    { "account": "18827359993", "pwd": "abcd1234", "role": "", "desc": "平台" }
+                    { "account": "18827359993", "pwd": "abcd1234", "role": "", "desc": "平台" },
+                    { "account": "14241333536", "pwd": "abcd1234", "role": "", "desc": "商户" }
                 ]
             }
         ]

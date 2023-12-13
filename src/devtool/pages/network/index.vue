@@ -1,6 +1,15 @@
 <template>
   <div class="decrypt-container">
-    <div class="header">
+    <div class="header flex flex-center">
+      <i
+        class="iconfont icon-qingchushujuku"
+        style="margin-right: 10px; cursor: pointer; font-size: 18px"
+        :style="{
+          color: recordsList.length ? (hasError ? 'red' : '#333') : '#999',
+          cursor: recordsList.length ? 'pointer' : 'not-allowed',
+        }"
+        @click="handleClear"
+      ></i>
       <el-input
         type="text"
         class="key-words"
@@ -11,15 +20,18 @@
       <el-button class="filter-btn" type="primary" plain @click="handleFilter"
         >过滤</el-button
       >
-      <el-button class="clear-btn" type="danger" plain @click="handleClear"
-        >清除所有</el-button
-      >
+      <el-checkbox
+        v-model="onlyAjax"
+        label="Fetch/XHR"
+        title="Show Only Fetch/XHR"
+      />
     </div>
     <div class="main">
       <div class="top">
         <div class="thead">
           <div class="th">#</div>
           <div class="th">Method</div>
+          <div class="th">Status</div>
           <div class="th">Url</div>
         </div>
         <div id="list">
@@ -27,13 +39,14 @@
             <div class="list-container" ref="containerRef">
               <div
                 class="row"
-                v-for="(item, i) in listMap"
+                v-for="(item, i) in recordsList"
                 :key="i"
                 :class="currentIndex === i ? 'selected' : ''"
                 @click="hanldeViewParams(item, i)"
               >
                 <div class="td">{{ i + 1 }}</div>
                 <div class="td">{{ item.method }}</div>
+                <div class="td">{{ item.status }}</div>
                 <div class="td" :title="item.url">{{ item.url }}</div>
               </div>
             </div>
@@ -41,39 +54,73 @@
         </div>
       </div>
       <div class="bottom">
-        <el-tabs type="border-card" model-value="Payload">
+        <el-tabs type="border-card" model-value="Preview">
           <el-scrollbar height="100%">
             <el-tab-pane
-              :disabled="!currentParams"
+              :disabled="!currentRecord"
               label="Headers"
               name="Headers"
             >
               <el-table
-                v-if="currentHeaders.length"
-                :data="currentHeaders"
+                v-if="currentRecord?.headers?.length"
+                :data="currentRecord?.headers"
                 size="small"
                 border
               >
                 <el-table-column prop="name" label="Name" width="120" />
-                <el-table-column prop="value" label="Value" />
+                <el-table-column prop="value" label="Value">
+                  <template #default="scope">
+                    <div class="content-column flex flex-center">
+                      {{ scope.row.value }}
+                      <i
+                        class="iconfont icon-fuzhi"
+                        style="margin-left: 8px"
+                        v-if="scope.row.name === 'request-id'"
+                        v-copyToClipboard="scope.row.value"
+                      ></i>
+                    </div>
+                  </template>
+                </el-table-column>
               </el-table>
             </el-tab-pane>
             <el-tab-pane
-              :disabled="!currentParams"
+              :disabled="!currentRecord"
               label="Payload"
               name="Payload"
             >
               <div class="info">
                 <i
-                  class="iconfont icon-fuzhi"
-                  v-if="currentParams"
-                  v-copyToClipboard="currentParams"
+                  class="iconfont icon-fuzhi payload"
+                  v-if="currentRecord"
+                  v-copyToClipboard="currentRecord?.params"
                 ></i>
                 <vue-json-pretty
-                  v-if="currentParams"
-                  :data="currentParams"
+                  v-if="currentRecord?.params"
+                  :data="currentRecord?.params"
                   :showLine="false"
                   :showDoubleQuotes="false"
+                  showIcon
+                />
+              </div>
+            </el-tab-pane>
+            <el-tab-pane
+              :disabled="!currentRecord"
+              label="Preview"
+              name="Preview"
+            >
+              <div class="info">
+                <i
+                  class="iconfont icon-fuzhi preview"
+                  v-if="currentRecord?.response"
+                  v-copyToClipboard="currentRecord?.response"
+                ></i>
+                <vue-json-pretty
+                  v-if="currentRecord?.response"
+                  :data="currentRecord?.response"
+                  :showLine="false"
+                  :showDoubleQuotes="false"
+                  showIcon
+                  :deep="1"
                 />
               </div>
             </el-tab-pane>
@@ -87,97 +134,88 @@
 <script setup>
 import { ref, nextTick } from "vue";
 import CryptoJS from "crypto-js";
-import { useUserStore } from "@/store/user.js";
+
+const onlyAjax = ref(true);
+const hasError = ref(false);
 
 const scrollRef = ref(null);
 const containerRef = ref(null);
 
-const listMap = ref([]);
+const recordsList = ref([]);
 const keyWords = ref("");
-// 建立与 background.js 的通信连接
-const port = chrome.runtime.connect({
-  name: "popup",
-});
-
-chrome.storage.local.get("keyWords", (res) => {
-  keyWords.value = res.keyWords || "";
-});
 
 // fix 解密报错
 const filterSpace = (str) => {
-  return str.replace(/\n*$/g, "").replace(/\n/g, "").replace(/\s/g, "");
+  return str.replace(/\n/g, "").replace(/\r/g, "").replace(/\s/g, "");
 };
 
-// 解密
-const { setNewTodo } = useUserStore();
 const decryptParams = (data, cookie) => {
   if (!data.enc_data) {
     return data;
   }
   try {
-    const key = CryptoJS.enc.Utf8.parse(cookie);
+    const key = CryptoJS.enc.Utf8.parse(cookie?.slice(cookie.length - 16));
     const decipher = CryptoJS.AES.decrypt(filterSpace(data.enc_data), key, {
       mode: CryptoJS.mode.ECB,
       padding: CryptoJS.pad.Pkcs7,
     });
     const plaintext = decipher.toString(CryptoJS.enc.Utf8);
-    return JSON.parse(plaintext);
+    return { ...data, enc_data: JSON.parse(plaintext) };
   } catch (error) {
-    setNewTodo(true);
+    hasError.value = true;
     console.error(error, data, cookie);
     return { msg: "解码异常，请重试", error };
   }
 };
 
-const initRecords = (records) => {
-  const list = records.map((e, i) => {
-    return {
-      ...e.payload,
-      i,
-      data: decryptParams(e.payload.data, e.payload.cookie),
-      headers: e.headers,
-    };
+const initRecord = (record) => {
+  // 关键词过滤
+  const { url, method, status } = record;
+  if (keyWords.value) {
+    const reg = new RegExp(keyWords.value, "gi");
+    if (!reg.test(url) && !reg.test(method) && !reg.test(status)) {
+      return;
+    }
+  }
+  const cookie = record.headers.find(
+    (e) => e.name?.toLocaleLowerCase() === "security-token"
+  )?.value;
+  recordsList.value.push({
+    ...record,
+    i: recordsList.value.length,
+    params: decryptParams(record.params, cookie),
   });
-  listMap.value = list;
   nextTick(() => {
     scrollRef.value &&
       scrollRef.value.setScrollTop(containerRef.value.clientHeight);
   });
 };
 
-chrome.runtime.onMessage.addListener(({ type, data }, sender, sendResponse) => {
-  switch (type) {
-    case 1:
-      initRecords(data);
-      break;
-
-    default:
-      break;
-  }
-});
-
-const currentParams = ref(null);
-const currentHeaders = ref([]);
+const currentRecord = ref(null);
 const currentIndex = ref(-1);
 
 const handleFilter = () => {
-  listMap.value = [];
-  currentParams.value = null;
-  currentHeaders.value = [];
+  recordsList.value = recordsList.value.filter((e) => {
+    const { url, method, status } = e;
+    const reg = new RegExp(keyWords.value, "gi");
+    return reg.test(url) || reg.test(method) || reg.test(status);
+  });
+  currentRecord.value = null;
   currentIndex.value = -1;
-  chrome.runtime.sendMessage({ type: 7, data: keyWords.value });
 };
 
 const handleClear = () => {
-  listMap.value = [];
+  recordsList.value = [];
+  currentRecord.value = null;
+  currentIndex.value = -1;
   chrome.runtime.sendMessage({ type: 2 });
 };
 
 const hanldeViewParams = (item, i) => {
-  currentParams.value = item.data;
-  currentHeaders.value = item.headers;
+  currentRecord.value = item;
   currentIndex.value = i;
   nextTick(() => {
+    // 时间戳转换
     const reg1 = /^[1-9][0-9]{9}$/gm;
     const reg2 = /^[1-9][0-9]{12}$/gm;
 
@@ -190,6 +228,19 @@ const hanldeViewParams = (item, i) => {
     });
   });
 };
+
+chrome.runtime.onMessage.addListener(({ type, data }, sender, sendResponse) => {
+  if (type === 1) {
+    const mimeTypes = ["application/json"];
+    data.forEach((e) => {
+      if (onlyAjax.value) {
+        mimeTypes.includes(e.mimeType) && initRecord(e);
+      } else {
+        initRecord(e);
+      }
+    });
+  }
+});
 </script>
 
 <style lang="scss" scoped>
@@ -199,32 +250,33 @@ const hanldeViewParams = (item, i) => {
 }
 .header {
   display: flex;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #ebeef5;
   .key-words {
-    flex: 1;
+    width: 200px;
   }
 }
 
 .filter-btn {
-  margin-left: 12px;
+  margin: 0 12px;
 }
 
 .main {
   flex: 1;
   display: flex;
-  flex-direction: column;
-  padding-top: 10px;
+  padding-top: 5px;
+  margin-top: 5px;
   overflow: hidden;
+  border-top: 1px solid #ebeef5;
   .top {
     flex: 1;
     display: flex;
     flex-direction: column;
     overflow: hidden;
     padding-bottom: 5px;
+    margin-right: 5px;
     .thead {
       padding: 5px 0;
       background: var(--el-fill-color-light);
+      border-radius: 4px;
     }
     #list {
       flex: 1;
@@ -251,14 +303,16 @@ const hanldeViewParams = (item, i) => {
         &:nth-of-type(1) {
           width: 25px;
         }
-        &:nth-of-type(2) {
+        &:nth-of-type(2),
+        &:nth-of-type(3) {
           width: 60px;
         }
         &:nth-of-type(1),
-        &:nth-of-type(2) {
+        &:nth-of-type(2),
+        &:nth-of-type(3) {
           text-align: center;
         }
-        &:nth-of-type(3) {
+        &:nth-of-type(4) {
           flex: 1;
           white-space: nowrap;
           text-overflow: ellipsis;
@@ -303,14 +357,17 @@ const hanldeViewParams = (item, i) => {
     }
     .icon-fuzhi {
       font-size: 16px;
-      position: absolute;
-      right: 10px;
-      top: 5px;
       cursor: pointer;
       color: #999;
       z-index: 999;
       &:hover {
         color: #333;
+      }
+      &.payload,
+      &.preview {
+        position: absolute;
+        right: 10px;
+        top: 5px;
       }
     }
   }

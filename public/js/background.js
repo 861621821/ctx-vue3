@@ -3,63 +3,23 @@ class Background {
     requestTime = null; // 请求时间
     timer = null;
     stopTime = null; // 记录停止时间 1h后再次提示
-    records = []; // 记录接口信息
-    headers = {}; // 请求头信息
     enableJira = false; // jira提醒开关
     jiraList = {}; // jira列表
     jiraMap = {};
-    keyWords = '';
-    recordsLength = 20; // 记录条数
     juejinTabId = null;
 
     constructor() {
-        chrome.storage.local.get('keyWords', (res) => {
-            this.keyWords = res.keyWords || '';
-        });
-
         chrome.storage.local.get('enableJira', (res) => {
             this.enableJira = res.enableJira || false;
         });
 
-        chrome.storage.onChanged.addListener(({ keyWords, enableJira }) => {
-            keyWords !== undefined && (this.keyWords = keyWords.newValue);
+        chrome.storage.onChanged.addListener(({ enableJira }) => {
             enableJira !== undefined && (this.enableJira = enableJira.newValue);
-        });
-
-        // 获取请求头信息
-        chrome.webRequest.onBeforeSendHeaders.addListener(
-            (details) => {
-                const { requestId, requestHeaders, method } = details;
-                if (method === 'OPTIONS') {
-                    return;
-                }
-                this.headers[requestId] = requestHeaders;
-            },
-            { urls: ['<all_urls>'] },
-            ['requestHeaders']
-        );
-        // 监听浏览器请求
-        chrome.webRequest.onBeforeRequest.addListener(this.formatRequestBody, { urls: ['<all_urls>'], types: ['xmlhttprequest'] }, ['requestBody']);
-
-        // 监听浏览器弹出窗口打开事件
-        chrome.runtime.onConnect.addListener((port) => {
-            if (port.name === 'popup') {
-                try {
-                    chrome.runtime.sendMessage({ type: 1, data: this.filterRecords() });
-                } catch (error) {
-                    console.log(error);
-                }
-            }
         });
 
         // 监听popup及content消息
         chrome.runtime.onMessage.addListener(({ type, data }, sender, sendResponse) => {
             switch (type) {
-                case 2:
-                    // 清空抓包记录
-                    this.records = [];
-                    break;
-
                 case 4:
                     // 标记已读
                     chrome.storage.local.set({ jiraMap: this.jiraMap });
@@ -67,17 +27,6 @@ class Background {
 
                 case 5:
                     this.stopTime = Date.now();
-                    break;
-
-                case 7:
-                    // 修改管关键词
-                    this.keyWords = data;
-                    chrome.storage.local.set({ keyWords: data });
-                    try {
-                        chrome.runtime.sendMessage({ type: 1, data: this.filterRecords() });
-                    } catch (error) {
-                        console.log(error);
-                    }
                     break;
 
                 case 8:
@@ -124,76 +73,6 @@ class Background {
             }, 15000);
         }, 500);
     }
-
-    // 获取cookie
-    getCookie() {
-        return new Promise((resolve, reject) => {
-            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-                if (tabs && tabs[0] && tabs[0].url) {
-                    chrome.cookies.getAll({ url: tabs[0].url }, (cookies) => {
-                        const authorization = cookies.find((e) => e.name === '_authorization');
-                        let cookie = authorization && authorization.value;
-                        if (cookie) {
-                            let res = cookie.slice(cookie.length - 16);
-                            resolve(res);
-                        } else {
-                            resolve(null);
-                        }
-                    });
-                }
-            });
-        });
-    }
-
-    /**
-     * @description: 格式化请求体
-     * @param {string} url
-     * @param {GET | POST | PUT | DELETE} method
-     * @param {object} requestBody
-     * @return {void}
-     */
-    formatRequestBody = async (details) => {
-        const { requestId, url, method, requestBody } = details;
-        if (method === 'OPTIONS') {
-            return;
-        }
-        let cookie = await this.getCookie();
-        if (!cookie) {
-            cookie = await this.getCookie();
-        }
-        let data = {};
-        if (method === 'POST' || method === 'PUT') {
-            const buffer = requestBody && requestBody.raw && requestBody.raw[0].bytes;
-            if (buffer) {
-                const decoder = new TextDecoder();
-                const str = decoder.decode(new Uint8Array(buffer));
-                try {
-                    data = JSON.parse(str);
-                } catch (error) {
-                    data = str;
-                }
-            }
-        } else {
-            const query = url.split('?')[1];
-            if (query) {
-                const params = query.split('&');
-                params.forEach((e) => {
-                    const temp = e.split('=');
-                    data[temp[0]] = temp[1];
-                });
-            }
-        }
-        if (url.includes(this.keyWords)) {
-            this.records.push({
-                requestId,
-                method,
-                url,
-                data,
-                cookie,
-            });
-            this.records = this.records.slice(-this.recordsLength);
-        }
-    };
 
     // 发起通知
     notify(map) {
@@ -293,22 +172,6 @@ class Background {
                 //     }
                 // });
             });
-    }
-
-    filterRecords() {
-        const records = [];
-        const res = [];
-        this.records.forEach((e) => {
-            if (e.url.includes(this.keyWords)) {
-                records.push(e);
-                res.push({
-                    headers: this.headers[e.requestId],
-                    payload: e,
-                });
-            }
-        });
-        this.records = records.slice(-this.recordsLength);
-        return res.slice(-this.recordsLength);
     }
 
     /**
