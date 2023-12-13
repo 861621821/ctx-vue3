@@ -13,6 +13,6 @@
 <style lang="scss" scoped>
 img {
   width: 160px;
-  margin-right: 10px;
+  margin-right: 20px;
 }
 </style>
