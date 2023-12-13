@@ -36,9 +36,9 @@ export default defineConfig({
                 }),
             ],
         }),
-        // zipPack({
-        //     outDir: './',
-        // }),
+        zipPack({
+            outDir: './',
+        }),
     ],
     build: {
         watch: true,

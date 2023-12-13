@@ -1,5 +1,4 @@
 import { createApp } from 'vue';
-import { createPinia } from 'pinia';
 import router from './router';
 import App from './App.vue';
 import copyToClipboard from '../directives/copyToClipboard';
@@ -10,11 +9,10 @@ import 'vue-json-pretty/lib/styles.css';
 
 import * as ElementPlusIconsVue from '@element-plus/icons-vue';
 
-const pinia = createPinia();
 const app = createApp(App);
 app.component('VueJsonPretty', VueJsonPretty);
 app.directive('copyToClipboard', copyToClipboard);
-app.use(router).use(pinia).mount('#app');
+app.use(router).mount('#app');
 
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component);
