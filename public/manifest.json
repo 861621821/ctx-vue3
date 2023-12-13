@@ -1,7 +1,7 @@
 {
     "name": "参数解密",
     "description": "Base Level Extension",
-    "version": "2.1.0",
+    "version": "3.0.0",
     "manifest_version": 3,
     "action": {
         "default_popup": "/src/popup/popup.html",
