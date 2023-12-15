@@ -2,10 +2,14 @@ let isReady = false; // NetworkPlus是否准备就绪
 let records = []; // 记录请求
 
 chrome.devtools.panels.create('NetworkPlus', null, '/src/devtool/devtool.html', (panel) => {
+    // 建立与 background.js 的通信连接
+    const port = chrome.runtime.connect({
+        name: 'NetworkPlus',
+    });
     panel.onShown.addListener(function (window) {
         console.info('NetworkPlus is open!');
         isReady = true;
-        chrome.runtime.sendMessage({ type: 1, data: records });
+        chrome?.runtime?.sendMessage({ type: 1, data: records });
         records = [];
     });
 });
@@ -38,7 +42,7 @@ chrome.devtools.network.onRequestFinished.addListener((detail) => {
             mimeType,
         };
         if (isReady) {
-            chrome.runtime.sendMessage({ type: 1, data: [record] });
+            chrome?.runtime?.sendMessage({ type: 1, data: [record] });
         } else {
             records.push(record);
         }

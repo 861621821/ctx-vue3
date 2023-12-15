@@ -58,7 +58,7 @@
           <el-scrollbar height="100%">
             <el-tab-pane
               :disabled="!currentRecord"
-              label="Headers"
+              label="RequestHeaders"
               name="Headers"
             >
               <el-table
