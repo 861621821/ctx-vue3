@@ -27,7 +27,7 @@
       />
     </div>
     <div class="main">
-      <div class="top">
+      <div class="left-area">
         <div class="thead">
           <div class="th">#</div>
           <div class="th">Method</div>
@@ -53,8 +53,9 @@
           </el-scrollbar>
         </div>
       </div>
-      <div class="bottom">
-        <el-tabs type="border-card" model-value="Preview">
+      <div class="adjustment"></div>
+      <div class="right-area">
+        <el-tabs model-value="Preview" type="border-card">
           <el-scrollbar height="100%">
             <el-tab-pane
               :disabled="!currentRecord"
@@ -266,13 +267,12 @@ chrome.runtime.onMessage.addListener(({ type, data }, sender, sendResponse) => {
   margin-top: 5px;
   overflow: hidden;
   border-top: 1px solid #ebeef5;
-  .top {
+  .left-area {
     flex: 1;
     display: flex;
     flex-direction: column;
     overflow: hidden;
     padding-bottom: 5px;
-    margin-right: 5px;
     .thead {
       padding: 5px 0;
       background: var(--el-fill-color-light);
@@ -321,7 +321,7 @@ chrome.runtime.onMessage.addListener(({ type, data }, sender, sendResponse) => {
       }
     }
   }
-  .bottom {
+  .right-area {
     flex: 1;
     display: flex;
     overflow: hidden;
@@ -370,6 +370,13 @@ chrome.runtime.onMessage.addListener(({ type, data }, sender, sendResponse) => {
         top: 5px;
       }
     }
+  }
+
+  .adjustment {
+    width: 1px;
+    margin: 0 2px;
+    // cursor: col-resize;
+    // background: #ebeef5;
   }
 }
 </style>

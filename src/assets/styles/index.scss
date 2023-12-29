@@ -53,6 +53,9 @@ body {
     .vjs-value-number {
         color: #ff8b31;
     }
+    .vjs-value {
+        word-break: break-all;
+    }
 }
 
 .flex {
