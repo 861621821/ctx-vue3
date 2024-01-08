@@ -101,6 +101,7 @@
                   :showLine="false"
                   :showDoubleQuotes="false"
                   showIcon
+                  :key="Date.now()"
                 />
               </div>
             </el-tab-pane>
@@ -121,7 +122,8 @@
                   :showLine="false"
                   :showDoubleQuotes="false"
                   showIcon
-                  :deep="1"
+                  :deep="2"
+                  :key="Date.now()"
                 />
               </div>
             </el-tab-pane>
@@ -212,8 +214,24 @@ const handleClear = () => {
   chrome.runtime.sendMessage({ type: 2 });
 };
 
+// 对象排序
+const sortObjectKey = (obj) => {
+  if (Object.prototype.toString.call(obj) === "[object Object]") {
+    const keys = Object.keys(obj).sort();
+    const newObj = {};
+    keys.forEach((e) => {
+      newObj[e] = sortObjectKey(obj[e]);
+    });
+    return newObj;
+  } else if (Array.isArray(obj)) {
+    return obj.map((e) => sortObjectKey(e));
+  } else {
+    return obj;
+  }
+};
+
 const hanldeViewParams = (item, i) => {
-  currentRecord.value = item;
+  currentRecord.value = sortObjectKey(item);
   currentIndex.value = i;
   nextTick(() => {
     // 时间戳转换
