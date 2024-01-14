@@ -1,15 +1,16 @@
 {
-    "name": "参数解密",
-    "description": "Base Level Extension",
+    "name": "西岚",
+    "description": "Xilan`s Chrome Extension",
     "version": "3.0.0",
     "manifest_version": 3,
+    "devtools_page": "src/panel/panel.html",
     "action": {
         "default_popup": "/src/popup/popup.html",
         "default_icon": {
-            "16": "icons/16.png",
-            "32": "icons/32.png",
-            "48": "icons/48.png",
-            "128": "icons/128.png"
+            "16": "src/assets/image/128.png",
+            "32": "src/assets/image/128.png",
+            "48": "src/assets/image/128.png",
+            "128": "src/assets/image/128.png"
         }
     },
     "commands": {
@@ -24,28 +25,30 @@
     "permissions": ["tabs", "storage", "webNavigation", "webRequest", "cookies", "notifications"],
     "host_permissions": ["http://*/*", "https://*/*", "<all_urls>"],
     "background": {
-        "service_worker": "js/background.js",
+        "service_worker": "src/utils/background.js",
         "type": "module"
     },
     "content_scripts": [
         {
             "matches": ["http://*/*", "https://*/*", "<all_urls>"],
-            "css": ["style/content.css"],
-            "js": ["js/jquery-3.6.0.min.js", "js/content.js"]
+            "js": ["src/content/main.js"]
+        },
+        {
+            "matches": ["http://*/*", "https://*/*", "<all_urls>"],
+            "js": ["src/utils/autoFill.js"]
         },
         {
             "matches": ["https://juejin.cn/user/center/signin*"],
-            "js": ["js/juejin.js"]
+            "js": ["src/utils/juejin.js"]
         },
         {
             "matches": ["https://blog.csdn.net/*"],
-            "js": ["js/csdn.js"]
+            "js": ["src/utils/csdn.js"]
         }
     ],
-    "devtools_page": "./panel.html",
     "web_accessible_resources": [
         {
-            "resources": ["icons/new.png"],
+            "resources": ["src/assets/image/new.png"],
             "matches": ["<all_urls>"]
         }
     ]

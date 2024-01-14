@@ -9,7 +9,7 @@ class Background {
     juejinTabId = null;
 
     constructor() {
-        chrome.storage.local.get('enableJira', (res) => {
+        chrome.storage.local.get('enableJira', res => {
             this.enableJira = res.enableJira || false;
         });
 
@@ -47,7 +47,7 @@ class Background {
         });
 
         // 监听浏览器切换前后台
-        chrome.windows.onFocusChanged.addListener((windowId) => {
+        chrome.windows.onFocusChanged.addListener(windowId => {
             this.isFocus = windowId !== -1;
             if (this.isFocus) {
                 const now = Date.now();
@@ -77,12 +77,12 @@ class Background {
     // 发起通知
     notify(map) {
         const keys = Object.keys(map);
-        let data = keys.map((key) => {
+        let data = keys.map(key => {
             return { key: key, value: map[key] };
         });
         // 通知content
         keys.length &&
-            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
                 if (tabs[0] && !tabs[0].url.startsWith('chrome://')) {
                     try {
                         chrome.tabs.sendMessage(tabs[0].id, { type: 3, data });
@@ -98,7 +98,7 @@ class Background {
         this.jiraMap = {};
         const regex = /<td\s+class="summary">\s*<p>(\s*<a[^>]+>(.*?)<\/a>\s*)*<\/p>\s*<\/td>/g;
         const results = str.match(regex);
-        results.forEach((e) => {
+        results.forEach(e => {
             const regex = /<a.*?href="(.*?)".*?>(.*?)<\/a>/g;
             const temp = e.match(regex).pop();
             const match = regex.exec(temp);
@@ -107,9 +107,9 @@ class Background {
             // 缓存jira列表
             this.jiraMap[href] = text;
         });
-        chrome.storage.local.get('jiraMap', (res) => {
+        chrome.storage.local.get('jiraMap', res => {
             const tempMap = JSON.parse(JSON.stringify(this.jiraMap));
-            Object.keys(res.jiraMap || {}).forEach((key) => {
+            Object.keys(res.jiraMap || {}).forEach(key => {
                 delete tempMap[key];
             });
             this.isFocus && this.notify(tempMap);
@@ -135,7 +135,7 @@ class Background {
             `https://jira.internal.pingxx.com/rest/gadget/1.0/issueTable/jql?num=10&tableContext=jira.table.cols.dashboard&addDefault=false&columnNames=issuetype&columnNames=issuekey&columnNames=summary&columnNames=assignee&columnNames=reporter&columnNames=status&columnNames=priority&enableSorting=true&paging=true&showActions=true&jql=assignee+%3D+currentUser()+AND+resolution+%3D+unresolved+ORDER+BY+priority+DESC%2C+created+ASC&sortBy=&startIndex=0&_=${Date.now()}`,
             { signal: controller.signal }
         )
-            .then(async (response) => {
+            .then(async response => {
                 clearTimeout(timeout);
                 timeout = null;
                 if (response.status === 401) {
@@ -143,7 +143,7 @@ class Background {
                     if (this.stopTime && Date.now() - this.stopTime < 1000 * 60 * 60) {
                         return;
                     }
-                    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                    chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
                         if (tabs[0] && !tabs[0].url.startsWith('chrome://')) {
                             try {
                                 chrome.tabs.sendMessage(tabs[0].id, { type: 6 });
@@ -160,7 +160,7 @@ class Background {
                     this.stopTime = null;
                 }
             })
-            .catch((err) => {
+            .catch(err => {
                 // clearTimeout(timeout);
                 // timeout = null;
                 // if (this.stopTime && Date.now() - this.stopTime < 1000 * 60 * 60) {
@@ -187,7 +187,7 @@ class Background {
                 {
                     url: 'https://juejin.cn/user/center/signin?from=main_page',
                 },
-                (tab) => {
+                tab => {
                     this.juejinTabId = tab.id;
                 }
             );
