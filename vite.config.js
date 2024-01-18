@@ -14,7 +14,6 @@ const fixManifest = () => ({
     writeBundle() {
         const manifestPath = './dist/manifest.json';
         const _manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-        delete _manifest.content_scripts[0].css;
         _manifest.content_scripts.unshift({
             js: ['jquery-3.7.1.js'],
             matches: ['http://*/*', 'https://*/*', '<all_urls>'],

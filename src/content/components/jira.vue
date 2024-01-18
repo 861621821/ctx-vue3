@@ -25,7 +25,6 @@ chrome.runtime.onMessage.addListener(({ type, data }) => {
     if (type === 3 && data.length) {
         modelType.value = 1   
         jiraList.value = data;
-        console.log(data);
     } else if (type === 6) {
         modelType.value = 2
     }

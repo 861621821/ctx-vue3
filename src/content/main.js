@@ -1,6 +1,6 @@
 import { createApp } from 'vue';
 import App from './App.vue';
-import mainCss from './main.scss';
+import mainCss from './main.scss?inline';
 
 // 创建一个shadow根元素
 const createAppRoot = () => {
