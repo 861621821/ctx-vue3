@@ -48,7 +48,7 @@
     ],
     "web_accessible_resources": [
         {
-            "resources": ["src/assets/image/new.png", "src/sandbox/sandbox.html"],
+            "resources": ["src/assets/image/new.png"],
             "matches": ["<all_urls>"]
         }
     ]

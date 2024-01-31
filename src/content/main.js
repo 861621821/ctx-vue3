@@ -1,7 +1,6 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 import mainCss from './main.scss?inline';
-import {} from './utils';
 
 // 创建一个shadow根元素
 const createAppRoot = () => {
@@ -16,13 +15,9 @@ const createAppRoot = () => {
     const appRootStyle = document.createElement('style');
     appRootStyle.textContent = mainCss;
 
-    const iframe = document.createElement('iframe');
-    iframe.src = chrome.runtime.getURL('src/sandbox/sandbox.html');
-
     const shadow = shadowParent.attachShadow({ mode: 'open' });
     shadow.appendChild(appRootStyle);
     shadow.appendChild(appRootEl);
-    shadow.appendChild(iframe);
     return appRootEl;
 };
 
