@@ -30,10 +30,18 @@ const autoInput = async ({ platform, account, pwd, org }) => {
             });
         }
         $('.send-btn').click();
-        await sleep(1500);
-        await handleSimulateSliding();
-        await sleep(1500);
-        $('.login-btn').click();
+        const obs = new MutationObserver(async mutationsList => {
+            if (mutationsList[0].target.style.display === 'none') {
+                await sleep(300);
+                $('.login-btn').click();
+                obs.disconnect();
+            }
+        });
+        obs.observe(document.querySelector('.mask'), { attributes: true });
+        // await sleep(500);
+        // await handleSimulateSliding();
+        // await sleep(1000);
+        // $('.login-btn').click();
     }
 };
 
@@ -79,19 +87,19 @@ const getScrollX = img => {
             const r = data[(j * 330 + i) * 4];
             const g = data[(j * 330 + i) * 4 + 1];
             const b = data[(j * 330 + i) * 4 + 2];
-            if (r > 243 && g > 243 && b > 243) {
+            if (r > 244 && g > 244 && b > 244) {
                 x.push(i);
                 // 改为红色
-                data[(j * 330 + i) * 4] = 255;
-                data[(j * 330 + i) * 4 + 1] = 0;
-                data[(j * 330 + i) * 4 + 2] = 0;
+                // data[(j * 330 + i) * 4] = 255;
+                // data[(j * 330 + i) * 4 + 1] = 0;
+                // data[(j * 330 + i) * 4 + 2] = 0;
             }
         }
     }
-    ctx.putImageData(imageData, 0, 0);
-    const img2 = document.createElement('img');
-    img2.src = canvas.toDataURL();
-    document.body.appendChild(img2);
+    // ctx.putImageData(imageData, 0, 0);
+    // const img2 = document.createElement('img');
+    // img2.src = canvas.toDataURL();
+    // document.body.appendChild(img2);
     return mostFrequentNumber(x);
 };
 
@@ -99,7 +107,7 @@ const handleSimulateSliding = () => {
     let times = 1; // 重试次数
     return new Promise(async resolve => {
         const _simulateSliding = async () => {
-            if (times > 3) {
+            if (times > 5) {
                 resolve();
                 return;
             }
@@ -115,7 +123,7 @@ const handleSimulateSliding = () => {
             if ($('.mask') && $('.mask').css('display') === 'none') {
                 resolve();
             } else {
-                await sleep(1500);
+                await sleep(1100);
                 _simulateSliding();
             }
         };

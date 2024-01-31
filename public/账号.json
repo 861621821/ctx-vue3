@@ -20,10 +20,13 @@
                 "vibe": "SIT",
                 "data": [
                     { "account": "18700000000", "pwd": "abcd1234!", "desc": "系统账号" },
-                    { "account": "18521735360", "pwd": "ybg123456", "desc": "" },
+                    { "account": "18521735360", "pwd": "ybg123456", "desc": "平台" },
                     { "account": "14816459079", "pwd": "abcd1234", "desc": "大商户" },
-                    { "account": "18827359993", "pwd": "abcd1234", "desc": "平台" },
-                    { "account": "14241333536", "pwd": "abcd1234", "desc": "商户" }
+                    { "account": "18827359993", "pwd": "abcd1234", "desc": "平台-熊熊" },
+                    { "account": "14241333536", "pwd": "abcd1234", "desc": "商户" },
+                    { "account": "19934605062", "pwd": "abcd1234", "desc": "商户" },
+                    { "account": "19422385299", "pwd": "abcd1234", "desc": "资方" },
+                    { "account": "16563095959", "pwd": "abcd1234", "desc": "供应商" }
                 ]
             }
         ]
