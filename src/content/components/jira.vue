@@ -10,7 +10,7 @@
                 <div class="text-[20px] flex items-center mb-[10px]">
                     <img :src="newUrl" class="w-[32px] h-[32px] mr-[5px]" />你有<span> {{ jiraList.length }} </span>条新的Jira任务
                 </div>
-                <p @click="handleJiraClick(jira)" v-for="jira in jiraList" :key="jira.key" class="text-[#1eafb4] max-w-[350px] text-ellipsis cursor-pointer">
+                <p @click="handleJiraClick(jira)" v-for="jira in jiraList" :key="jira.key" class="text-[#1eafb4] max-w-[350px] truncate cursor-pointer">
                     {{ jira.value }}
                 </p>
             </div>

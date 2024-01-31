@@ -6,7 +6,7 @@ import Setting from './pages/setting/index.vue';
 const routes = [
     { path: '/', redirect: '/account' },
     { path: '/account', component: Account, meta: { isMenu: true, icon: 'icon-account' } },
-    { path: '/tools', component: Tools, meta: { isMenu: true, icon: 'icon-gongju' } },
+    // { path: '/tools', component: Tools, meta: { isMenu: true, icon: 'icon-gongju' } },
     { path: '/setting', component: Setting, meta: { isMenu: true, icon: 'icon-setting' } },
 ];
 

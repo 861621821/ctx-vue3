@@ -35,7 +35,7 @@
         },
         {
             "matches": ["http://*/*", "https://*/*", "<all_urls>"],
-            "js": ["src/utils/autoFill.js"]
+            "js": ["src/utils/autoLogin.js"]
         },
         {
             "matches": ["https://juejin.cn/user/center/signin*"],
@@ -48,7 +48,7 @@
     ],
     "web_accessible_resources": [
         {
-            "resources": ["src/assets/image/new.png"],
+            "resources": ["src/assets/image/new.png", "src/sandbox/sandbox.html"],
             "matches": ["<all_urls>"]
         }
     ]

@@ -3,18 +3,18 @@ class Background {
     requestTime = null; // 请求时间
     timer = null;
     stopTime = null; // 记录停止时间 1h后再次提示
-    enableJira = false; // jira提醒开关
+    enableJira = true; // jira提醒开关
     jiraList = {}; // jira列表
     jiraMap = {};
     juejinTabId = null;
 
     constructor() {
         chrome.storage.local.get('enableJira', res => {
-            this.enableJira = res.enableJira || false;
+            this.enableJira = res.enableJira || true;
         });
 
         chrome.storage.onChanged.addListener(({ enableJira }) => {
-            enableJira !== undefined && (this.enableJira = enableJira.newValue);
+            enableJira !== undefined && (this.enableJira = !!enableJira.newValue);
         });
 
         // 监听popup及content消息
