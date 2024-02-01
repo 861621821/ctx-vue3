@@ -31,13 +31,14 @@ const autoInput = async ({ platform, account, pwd, org }) => {
         }
         $('.send-btn').click();
         const obs = new MutationObserver(async mutationsList => {
-            if (mutationsList[0].target.style.display === 'none') {
-                await sleep(300);
+            const div = mutationsList[0].addedNodes[0];
+            if (div && div.className === 'ant-statistic') {
+                await sleep(100);
                 $('.login-btn').click();
                 obs.disconnect();
             }
         });
-        obs.observe(document.querySelector('.mask'), { attributes: true });
+        obs.observe(document.querySelector('.send-btn'), { childList: true });
         // await sleep(500);
         // await handleSimulateSliding();
         // await sleep(1000);
