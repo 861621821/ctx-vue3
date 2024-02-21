@@ -4,8 +4,8 @@ const sleep = ms => {
 };
 
 const autoInput = async ({ platform, account, pwd, org }) => {
-    if (window.location.pathname === '/login') {
-        if (platform === 'lt') {
+    if (window.location.pathname.indexOf('/login') > -1) {
+        if (platform === '连通') {
             const inputs = $('.login-item input.ant-input');
             inputs.eq(0).val(account);
             inputs.eq(1).val(pwd);

@@ -68,6 +68,7 @@ const queryAccounts = async () => {
             };
         }
     });
+    chrome.storage.local.set({ account: data.value }); // 更新、缓存账号数据
 };
 
 const handleAdd = (list, platform, env) => {
@@ -89,7 +90,6 @@ const handleRemove = async ({ id }, list) => {
 
 const handleSubmit = async row => {
     row.isEdit = false;
-    console.log(row);
     if (row.id) {
         await updateAccount(row);
         await queryAccounts();
@@ -102,7 +102,6 @@ const handleSubmit = async row => {
 };
 
 const handleLogin = data => {
-    console.log(data);
     // 获取当前激活的标签页ID
     chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
         // 发送消息到当前标签页的content.js
@@ -112,7 +111,22 @@ const handleLogin = data => {
 };
 
 onMounted(async () => {
-    queryAccounts();
+    chrome.storage.local.get('account', res => {
+        const account = JSON.parse(JSON.stringify(res.account));
+        if (account) {
+            for (const platform in account) {
+                for (const env in account[platform]) {
+                    account[platform][env] = Object.values(account[platform][env]);
+                }
+            }
+            data.value = account;
+        } else {
+            queryAccounts();
+        }
+    });
+    setTimeout(() => {
+        queryAccounts();
+    }, 500);
 });
 </script>
 
