@@ -1,6 +1,5 @@
 <template>
-    <div class="account-container">
-        <div v-show="loading" class="loading"><i class="iconfont icon-loading"></i></div>
+    <div class="account-container" v-loading="loading">
         <el-scrollbar>
             <div class="platform" v-for="(envs, platform) in data" :key="platform">
                 <div class="platform-title">{{ platform }}</div>
