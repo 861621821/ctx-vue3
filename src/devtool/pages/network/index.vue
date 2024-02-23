@@ -12,6 +12,7 @@
             <el-input type="text" class="key-words" placeholder="输入关键词过滤" clearable v-model="keyWords" />
             <el-button class="filter-btn" type="primary" plain @click="handleFilter">过滤</el-button>
             <el-checkbox v-model="onlyAjax" disabled label="Fetch/XHR" title="Show Only Fetch/XHR" />
+            <div class="desc"><i class="iconfont icon-tishi"></i>由于Chrome限制，需要先激活NetworkPlus（手动打开面板一次）后才能记录请求信息</div>
         </div>
         <div class="main">
             <div class="left-area">
@@ -232,6 +233,19 @@ chrome.devtools.network.onRequestFinished.addListener(detail => {
     display: flex;
     .key-words {
         width: 200px;
+    }
+    .desc {
+        margin-left: auto;
+        margin-right: 10px;
+        font-size: 10px;
+        color: #a8abb2;
+        display: flex;
+        align-items: center;
+        i {
+            font-size: 12px;
+            margin-right: 4px;
+            color: #ff3f3f;
+        }
     }
 }
 
