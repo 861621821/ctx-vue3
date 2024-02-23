@@ -6,7 +6,6 @@ class Background {
     enableJira = true; // jira提醒开关
     jiraList = {}; // jira列表
     jiraMap = {};
-    juejinTabId = null;
 
     constructor() {
         chrome.storage.local.get('enableJira', res => {
@@ -20,20 +19,17 @@ class Background {
         // 监听popup及content消息
         chrome.runtime.onMessage.addListener(({ type, data }, sender, sendResponse) => {
             switch (type) {
-                case 4:
+                case 'read':
                     // 标记已读
                     chrome.storage.local.set({ jiraMap: this.jiraMap });
                     break;
 
-                case 5:
+                case 'suspend':
+                    // 暂停轮训
                     this.stopTime = Date.now();
                     break;
 
-                case 8:
-                    chrome.tabs.remove(this.juejinTabId);
-                    break;
-
-                case 99:
+                case 'newTab':
                     // 打开新标签
                     chrome.tabs.create({
                         url: data, // https://baidu.com
@@ -85,7 +81,7 @@ class Background {
             chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
                 if (tabs[0] && !tabs[0].url.startsWith('chrome://')) {
                     try {
-                        chrome.tabs.sendMessage(tabs[0].id, { type: 3, data });
+                        chrome.tabs.sendMessage(tabs[0].id, { type: 'newJiraNotify', data });
                     } catch (error) {
                         console.log(error);
                     }
@@ -146,7 +142,7 @@ class Background {
                     chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
                         if (tabs[0] && !tabs[0].url.startsWith('chrome://')) {
                             try {
-                                chrome.tabs.sendMessage(tabs[0].id, { type: 6 });
+                                chrome.tabs.sendMessage(tabs[0].id, { type: 'loginJiraNotify' });
                             } catch (error) {
                                 console.log(error);
                             }
@@ -168,7 +164,7 @@ class Background {
                 // }
                 // chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
                 //     if (tabs[0] && !tabs[0].url.startsWith('chrome://')) {
-                //         chrome.tabs.sendMessage(tabs[0].id, { type: 6 });
+                //         chrome.tabs.sendMessage(tabs[0].id, { type: 'loginJiraNotify' });
                 //     }
                 // });
             });
@@ -183,16 +179,13 @@ class Background {
         const { signInDay = '' } = await chrome.storage.local.get('signInDay');
         if (signInDay !== today) {
             chrome.storage.local.set({ signInDay: today });
-            chrome.tabs.create(
-                {
-                    url: 'https://juejin.cn/user/center/signin?from=main_page',
-                },
-                tab => {
-                    this.juejinTabId = tab.id;
-                }
-            );
+            chrome.tabs.create({
+                url: 'https://juejin.cn/user/center/signin?from=main_page',
+            });
         }
     }
 }
 
-new Background();
+chrome.runtime.onStartup.addListener(() => {
+    new Background();
+});

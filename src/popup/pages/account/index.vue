@@ -105,14 +105,14 @@ const handleLogin = data => {
     // 获取当前激活的标签页ID
     chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
         // 发送消息到当前标签页的content.js
-        chrome.tabs.sendMessage(tabs[0].id, { type: 20, data });
+        chrome.tabs.sendMessage(tabs[0].id, { type: 'autoLogin', data });
     });
     window.close();
 };
 
 onMounted(async () => {
     chrome.storage.local.get('account', res => {
-        const account = JSON.parse(JSON.stringify(res.account));
+        const account = res.account ? JSON.parse(JSON.stringify(res.account)) : undefined;
         if (account) {
             for (const platform in account) {
                 for (const env in account[platform]) {

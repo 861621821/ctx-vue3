@@ -10,7 +10,7 @@
                 <div class="text-[20px] flex items-center mb-[10px]">
                     <img :src="newUrl" class="w-[32px] h-[32px] mr-[5px]" />你有<span> {{ jiraList.length }} </span>条新的Jira任务
                 </div>
-                <p @click="handleJiraClick(jira)" v-for="jira in jiraList" :key="jira.key" class="text-[#1eafb4] max-w-[350px] truncate cursor-pointer">
+                <p @click="handleJiraClick(jira)" v-for="jira in jiraList" :key="jira.key" class="text-[#1eafb4] max-w-[350px] truncate cursor-pointer leading-6">
                     {{ jira.value }}
                 </p>
             </div>
@@ -30,10 +30,10 @@ const modelType = ref(0); // 1: jira, 2: login
 const jiraList = ref([]);
 
 chrome.runtime.onMessage.addListener(({ type, data }) => {
-    if (type === 3 && data.length) {
+    if (type === 'newJiraNotify' && data.length) {
         modelType.value = 1;
         jiraList.value = data;
-    } else if (type === 6) {
+    } else if (type === 'loginJiraNotify') {
         modelType.value = 2;
     }
 });
@@ -47,11 +47,11 @@ const handleLogin = () => {
 const handleJiraClick = ({ key, value }) => {
     modelType.value = 0;
     window.open(key, '_blank');
-    chrome.runtime.sendMessage({ type: 4 });
+    chrome.runtime.sendMessage({ type: 'read' });
 };
 
 const handleCloseClick = () => {
-    chrome.runtime.sendMessage({ type: modelType.value === 1 ? 4 : 5 });
+    chrome.runtime.sendMessage({ type: modelType.value === 1 ? 'read' : 'suspend' });
     modelType.value = 0;
 };
 </script>

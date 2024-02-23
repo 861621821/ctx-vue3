@@ -11,7 +11,7 @@
                 @click="handleClear"></i>
             <el-input type="text" class="key-words" placeholder="输入关键词过滤" clearable v-model="keyWords" />
             <el-button class="filter-btn" type="primary" plain @click="handleFilter">过滤</el-button>
-            <el-checkbox v-model="onlyAjax" label="Fetch/XHR" title="Show Only Fetch/XHR" />
+            <el-checkbox v-model="onlyAjax" disabled label="Fetch/XHR" title="Show Only Fetch/XHR" />
         </div>
         <div class="main">
             <div class="left-area">
@@ -36,7 +36,7 @@
             </div>
             <div class="adjustment"></div>
             <div class="right-area">
-                <el-tabs model-value="Preview" type="border-card">
+                <el-tabs model-value="Payload" type="border-card">
                     <el-scrollbar height="100%">
                         <el-tab-pane :disabled="!currentRecord" label="RequestHeaders" name="Headers">
                             <el-table v-if="currentRecord?.headers?.length" :data="currentRecord?.headers" size="small" border>
@@ -150,7 +150,7 @@ const handleClear = () => {
     recordsList.value = [];
     currentRecord.value = null;
     currentIndex.value = -1;
-    chrome.runtime.sendMessage({ type: 2 });
+    chrome.runtime.sendMessage({ type: 'clear' });
 };
 
 // 对象排序
@@ -187,17 +187,39 @@ const hanldeViewParams = (item, i) => {
     });
 };
 
-chrome.runtime.onMessage.addListener(({ type, data }, sender, sendResponse) => {
-    if (type === 1) {
+chrome.devtools.network.onRequestFinished.addListener(detail => {
+    const {
+        request: { url, postData, headers, method },
+        response: {
+            status,
+            content: { mimeType },
+        },
+    } = detail;
+    // 获取请求头、参数、response
+    const params = postData?.text ? JSON.parse(postData.text) : {};
+    detail.getContent(content => {
+        let response = {};
+        try {
+            response = JSON.parse(content);
+        } catch (error) {
+            response = content;
+        }
+        const record = {
+            url,
+            method,
+            status,
+            headers,
+            params,
+            response,
+            mimeType,
+        };
         const mimeTypes = ['application/json'];
-        data.forEach(e => {
-            if (onlyAjax.value) {
-                mimeTypes.includes(e.mimeType) && initRecord(e);
-            } else {
-                initRecord(e);
-            }
-        });
-    }
+        if (onlyAjax.value) {
+            mimeTypes.includes(record.mimeType) && initRecord(record);
+        } else {
+            initRecord(record);
+        }
+    });
 });
 </script>
 

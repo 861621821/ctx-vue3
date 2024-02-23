@@ -47,7 +47,7 @@ const autoInput = async ({ platform, account, pwd, org }) => {
 };
 
 chrome.runtime.onMessage.addListener(({ type, data }) => {
-    if (type === 20) {
+    if (type === 'autoLogin') {
         autoInput(data);
     }
 });

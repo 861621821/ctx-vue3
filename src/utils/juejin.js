@@ -1,6 +1,6 @@
 $(document).ready(() => {
     $('button.signin').click();
     setTimeout(() => {
-        chrome.runtime.sendMessage({ type: 8 });
+        window.close();
     }, 2000);
 });
