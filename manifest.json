@@ -1,6 +1,6 @@
 {
-    "name": "西岚",
-    "description": "Xilan`s Chrome Extension",
+    "name": "Ping++",
+    "description": "Ping++ Developer",
     "version": "3.0.0",
     "manifest_version": 3,
     "devtools_page": "src/panel/panel.html",
