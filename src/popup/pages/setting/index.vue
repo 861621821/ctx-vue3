@@ -1,6 +1,6 @@
 <template>
     <div class="setting-container">
-        <el-switch v-model="enableJira" active-text="开启Jira提醒" @change="onChange" />
+        <el-switch v-model="enableJira" :active-text="enableJira ? '关闭Jira提醒' : '开启Jira提醒'" @change="onChange" />
     </div>
 </template>
 
