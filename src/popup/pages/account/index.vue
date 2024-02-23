@@ -9,12 +9,12 @@
                         <el-table stripe :data="list" @row-dblclick="handleLogin">
                             <el-table-column>
                                 <template #default="{ row }">
-                                    <el-input size="small" :class="{ readonly: !row.isEdit }" :readonly="!row.isEdit" v-model="row.account"></el-input>
+                                    <el-input size="small" :class="{ readonly: !row.isEdit, 'is-error': row.accountError && row.isEdit }" :readonly="!row.isEdit" v-model="row.account"></el-input>
                                 </template>
                             </el-table-column>
                             <el-table-column>
                                 <template #default="{ row }">
-                                    <el-input size="small" :class="{ readonly: !row.isEdit }" :readonly="!row.isEdit" v-model="row.pwd"></el-input>
+                                    <el-input size="small" :class="{ readonly: !row.isEdit, 'is-error': row.pwdError && row.isEdit }" :readonly="!row.isEdit" v-model="row.pwd"></el-input>
                                 </template>
                             </el-table-column>
                             <el-table-column show-overflow-tooltip>
@@ -88,6 +88,11 @@ const handleRemove = async ({ id }, list) => {
 };
 
 const handleSubmit = async row => {
+    row.accountError = !row.account;
+    row.pwdError = !row.pwd;
+    if (row.accountError || row.pwdError) {
+        return;
+    }
     row.isEdit = false;
     if (row.id) {
         await updateAccount(row);
@@ -98,6 +103,7 @@ const handleSubmit = async row => {
             await queryAccounts();
         }
     }
+    error.value = { account: false, pwd: false };
 };
 
 const handleLogin = data => {
@@ -191,6 +197,9 @@ onMounted(async () => {
                 --el-input-bg-color: transparent;
                 --el-input-hover-border-color: transparent;
                 --el-input-focus-border-color: transparent;
+            }
+            .is-error {
+                --el-input-border-color: var(--el-color-danger);
             }
             .action {
                 display: flex;
