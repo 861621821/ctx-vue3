@@ -36,14 +36,6 @@
         {
             "matches": ["http://*/*", "https://*/*", "<all_urls>"],
             "js": ["src/utils/autoLogin.js"]
-        },
-        {
-            "matches": ["https://juejin.cn/user/center/signin*"],
-            "js": ["src/utils/juejin.js"]
-        },
-        {
-            "matches": ["https://blog.csdn.net/*"],
-            "js": ["src/utils/csdn.js"]
         }
     ],
     "web_accessible_resources": [
