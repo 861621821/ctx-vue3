@@ -69,3 +69,16 @@ export const deleteAccount = async id => {
         }
     });
 };
+
+/**
+ * @description: 添加指纹
+ * @param {*} row
+ * @return {*}
+ */
+export const insertFingerprint = async fingerprint => {
+    const { data } = await supabase.from('ctx_fingerprint').select('*').eq('fingerprint', fingerprint);
+    if (data.length === 0) {
+        const row = { fingerprint };
+        const { data, error } = await supabase.from('ctx_fingerprint').insert(row);
+    }
+};

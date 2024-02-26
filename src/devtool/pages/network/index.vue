@@ -90,7 +90,7 @@ const filterSpace = str => {
 };
 
 const decryptParams = (data, cookie) => {
-    if (!data.enc_data) {
+    if (!data?.enc_data) {
         return data;
     }
     try {
@@ -116,18 +116,18 @@ const decryptParams = (data, cookie) => {
 
 const initRecord = record => {
     // 关键词过滤
-    const { url, method, status } = record;
+    const { url, method, status, headers, params } = record;
     if (keyWords.value) {
         const reg = new RegExp(keyWords.value, 'gi');
         if (!reg.test(url) && !reg.test(method) && !reg.test(status)) {
             return;
         }
     }
-    const cookie = record.headers.find(e => e.name?.toLowerCase() === 'security-token')?.value;
+    const cookie = headers.find(e => e.name?.toLowerCase() === 'security-token')?.value;
     recordsList.value.push({
         ...record,
         i: recordsList.value.length,
-        params: decryptParams(record.params, cookie),
+        params: decryptParams(params, cookie),
     });
     nextTick(() => {
         scrollRef.value && scrollRef.value.setScrollTop(containerRef.value.clientHeight);
@@ -197,7 +197,14 @@ chrome.devtools.network.onRequestFinished.addListener(detail => {
         },
     } = detail;
     // 获取请求头、参数、response
-    const params = postData?.text ? JSON.parse(postData.text) : {};
+    let params = {};
+    if (postData?.text) {
+        try {
+            params = JSON.parse(postData.text);
+        } catch (error) {
+            params = postData.text;
+        }
+    }
     detail.getContent(content => {
         let response = {};
         try {

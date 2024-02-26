@@ -9,7 +9,7 @@ class Background {
 
     constructor() {
         chrome.storage.local.get('enableJira', res => {
-            this.enableJira = res.enableJira || true;
+            this.enableJira = res.enableJira ?? true;
         });
 
         chrome.storage.onChanged.addListener(({ enableJira }) => {
