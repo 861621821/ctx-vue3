@@ -9,7 +9,7 @@ import { ref } from 'vue';
 
 const enableJira = ref(true);
 chrome.storage.local.get('enableJira', res => {
-    enableJira.value = res.enableJira || true;
+    enableJira.value = res.enableJira ?? true;
 });
 
 const onChange = () => {
