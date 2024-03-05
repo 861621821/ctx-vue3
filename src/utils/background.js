@@ -1,10 +1,10 @@
 class Background {
+    TIME_INTERVAL = 15000;
     isFocus = true; // 是否在前台
     requestTime = null; // 请求时间
     timer = null;
     stopTime = null; // 记录停止时间 1h后再次提示
     enableJira = true; // jira提醒开关
-    jiraList = {}; // jira列表
     jiraMap = {};
 
     constructor() {
@@ -46,18 +46,7 @@ class Background {
         chrome.windows.onFocusChanged.addListener(windowId => {
             this.isFocus = windowId !== -1;
             if (this.isFocus) {
-                const now = Date.now();
-                if (now - this.requestTime > 15000) {
-                    setTimeout(() => {
-                        this.queryJira();
-                    }, 500);
-                }
-                this.timer = setInterval(() => {
-                    this.queryJira();
-                }, 15000);
                 this.juejin();
-            } else {
-                clearInterval(this.timer);
             }
         });
 
@@ -66,7 +55,7 @@ class Background {
             this.juejin();
             this.timer = setInterval(() => {
                 this.queryJira();
-            }, 15000);
+            }, this.TIME_INTERVAL);
         }, 500);
     }
 
@@ -114,11 +103,8 @@ class Background {
 
     // 获取jira分配给我的信息
     queryJira() {
-        if (!this.enableJira) {
-            return;
-        }
         let now = Date.now();
-        if (this.requestTime && now - this.requestTime < 15000) {
+        if (!this.enableJira || (this.requestTime && now - this.requestTime < this.TIME_INTERVAL)) {
             return;
         }
         this.requestTime = now;

@@ -26,7 +26,7 @@
 import { ref } from 'vue';
 const newUrl = chrome.runtime.getURL('src/assets/image/new.png');
 
-const modelType = ref(0); // 1: jira, 2: login
+const modelType = ref(0); // 0: 初始状态（无弹窗）； 1: jira； 2: login
 const jiraList = ref([]);
 
 chrome.runtime.onMessage.addListener(({ type, data }) => {
