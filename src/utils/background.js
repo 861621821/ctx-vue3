@@ -1,8 +1,7 @@
 class Background {
     TIME_INTERVAL = 15000;
-    isFocus = true; // 是否在前台
+    appReady = true; // 接收方是否准备好
     requestTime = null; // 请求时间
-    timer = null;
     stopTime = null; // 记录停止时间 1h后再次提示
     enableJira = true; // jira提醒开关
     jiraMap = {};
@@ -42,21 +41,19 @@ class Background {
             sendResponse({ status: 2 });
         });
 
+        this.queryJira();
+        this.juejin();
+        setInterval(() => {
+            this.queryJira();
+        }, this.TIME_INTERVAL);
+
         // 监听浏览器切换前后台
         chrome.windows.onFocusChanged.addListener(windowId => {
-            this.isFocus = windowId !== -1;
-            if (this.isFocus) {
+            if (windowId !== -1) {
+                this.queryJira(false);
                 this.juejin();
             }
         });
-
-        setTimeout(() => {
-            this.queryJira();
-            this.juejin();
-            this.timer = setInterval(() => {
-                this.queryJira();
-            }, this.TIME_INTERVAL);
-        }, 500);
     }
 
     // 发起通知
@@ -97,14 +94,14 @@ class Background {
             Object.keys(res.jiraMap || {}).forEach(key => {
                 delete tempMap[key];
             });
-            this.isFocus && this.notify(tempMap);
+            this.notify(tempMap);
         });
     }
 
     // 获取jira分配给我的信息
-    queryJira() {
+    queryJira(flag = true) {
         let now = Date.now();
-        if (!this.enableJira || (this.requestTime && now - this.requestTime < this.TIME_INTERVAL)) {
+        if (flag && (!this.enableJira || (this.requestTime && now - this.requestTime < this.TIME_INTERVAL))) {
             return;
         }
         this.requestTime = now;
@@ -137,7 +134,7 @@ class Background {
                     return;
                 }
                 const data = await response.json();
-                if (data?.table) {
+                if (data?.table && this.appReady) {
                     this.formatJira(data?.table);
                     this.stopTime = null;
                 }
@@ -172,6 +169,8 @@ class Background {
     }
 }
 
-chrome.runtime.onStartup.addListener(() => {
-    new Background();
+const instance = new Background();
+
+chrome.runtime.onInstalled.addListener(() => {
+    instance.appReady = false;
 });

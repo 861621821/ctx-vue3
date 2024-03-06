@@ -1,5 +1,5 @@
 <template>
-    <div class="account-container" v-loading="loading">
+    <div class="account-container">
         <el-scrollbar>
             <div class="platform" v-for="(envs, platform) in data" :key="platform">
                 <div class="platform-title">{{ platform }}</div>
@@ -138,26 +138,6 @@ onMounted(async () => {
 <style lang="scss" scoped>
 .account-container {
     position: relative;
-    .loading {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 99;
-        i {
-            display: inline-block;
-            font-size: 28px;
-            animation: rotate 1s linear infinite;
-        }
-        @keyframes rotate {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-    }
     .platform-title {
         margin-bottom: 10px;
         padding: 10px;
