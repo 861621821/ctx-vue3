@@ -50,6 +50,7 @@ class Background {
         chrome.windows.onFocusChanged.addListener(windowId => {
             if (windowId !== -1) {
                 this.queryJira(false);
+                this.requestTime = Date.now();
             }
         });
     }
