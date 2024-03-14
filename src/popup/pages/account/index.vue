@@ -105,7 +105,6 @@ const handleSubmit = async row => {
             await queryAccounts();
         }
     }
-    error.value = { account: false, pwd: false };
 };
 
 const handleLogin = data => {
