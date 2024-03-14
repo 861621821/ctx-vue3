@@ -353,8 +353,8 @@ chrome.devtools.network.onRequestFinished.addListener(detail => {
                 user-select: none;
                 &.is-active {
                     background: transparent;
-                    border-right-color: var(--el-border-color);
-                    border-bottom-color: var(--el-border-color);
+                    border-right-color: transparent;
+                    border-left-color: transparent;
                 }
             }
             .el-table__header-wrapper {
