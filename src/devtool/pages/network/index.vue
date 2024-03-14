@@ -257,6 +257,7 @@ chrome.devtools.network.onRequestFinished.addListener(detail => {
             font-size: 12px;
             margin-right: 4px;
             color: #ff3f3f;
+            margin-top: 1px;
         }
     }
 }
