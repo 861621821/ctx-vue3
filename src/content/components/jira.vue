@@ -1,5 +1,7 @@
 <template>
-    <div v-if="modelType !== 0" class="xl-model min-w-[350px] max-w-[600px] bg-slate-50 p-[20px] rounded-[12px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 shadow-2xl">
+    <div
+        v-if="modelType !== 0"
+        class="xl-model min-w-[350px] max-w-[600px] bg-slate-50 after:content-[''] after:-z-10 after:w-full after:h-full after:rounded-[12px] after:block after:absolute after:top-0 after:left-0 after:bg-gradient-to-br from-transparent from-20% via-[#e9f7fa] via-50% to-transparent to-80% p-[20px] rounded-[12px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 shadow-2xl">
         <sapn
             @click="handleCloseClick"
             class="close cursor-pointer flex items-center justify-around rotate-45 w-[16px] h-[16px] text-slate-600 bg-slate-100 shadow-sm absolute right-[-6px] top-[-6px] rounded-full"
@@ -26,7 +28,7 @@
 import { ref } from 'vue';
 const newUrl = chrome.runtime.getURL('src/assets/image/new.png');
 
-const modelType = ref(0); // 0: 初始状态（无弹窗）； 1: jira； 2: login
+const modelType = ref(2); // 0: 初始状态（无弹窗）； 1: jira； 2: login
 const jiraList = ref([]);
 
 chrome.runtime.onMessage.addListener(({ type, data }) => {
