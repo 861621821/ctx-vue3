@@ -36,11 +36,16 @@
                 </div>
             </div>
             <div class="adjustment"></div>
-            <div class="right-area">
-                <el-tabs model-value="Payload" type="border-card">
+            <div class="right-area" style="--el-border-color: #d8d8d8">
+                <el-tabs model-value="Payload" type="border-card" style="--el-bg-color-overlay: transparent; --el-border-color-light: #d8d8d8">
                     <el-scrollbar height="100%">
                         <el-tab-pane :disabled="!currentRecord" label="RequestHeaders" name="Headers">
-                            <el-table v-if="currentRecord?.headers?.length" :data="currentRecord?.headers" size="small" border>
+                            <el-table
+                                v-if="currentRecord?.headers?.length"
+                                :data="currentRecord?.headers"
+                                size="small"
+                                border
+                                style="--el-table-bg-color: transparent; --el-table-tr-bg-color: transparent; --el-table-border-color: #d8d8d8">
                                 <el-table-column prop="name" label="Name" width="120" />
                                 <el-table-column prop="value" label="Value">
                                     <template #default="scope">
@@ -287,17 +292,6 @@ chrome.devtools.network.onRequestFinished.addListener(detail => {
         .row {
             display: flex;
             padding: 5px 0;
-            cursor: pointer;
-            transition: background 0.2s;
-            &:nth-child(even) {
-                background: #f7f7f7;
-            }
-            &:hover {
-                background: #c2e7ea7c;
-            }
-            &.selected {
-                background: #c2e7ea;
-            }
             div {
                 padding: 0 5px;
                 &:nth-of-type(1) {
@@ -320,6 +314,19 @@ chrome.devtools.network.onRequestFinished.addListener(detail => {
                 }
             }
         }
+        .row {
+            cursor: pointer;
+            transition: background 0.2s;
+            &:nth-child(even) {
+                background: #f7f7f7;
+            }
+            &:hover {
+                background: #c2e7ea7c;
+            }
+            &.selected {
+                background: #c2e7ea;
+            }
+        }
     }
     .right-area {
         flex: 1;
@@ -332,6 +339,9 @@ chrome.devtools.network.onRequestFinished.addListener(detail => {
             flex-direction: column;
             border-radius: 4px;
             overflow: hidden;
+            & > .el-tabs__header {
+                background: transparent;
+            }
             .el-tabs__content {
                 padding: 5px;
                 flex: 1;
@@ -341,15 +351,20 @@ chrome.devtools.network.onRequestFinished.addListener(detail => {
                 --el-font-size-base: 12px;
                 padding: 0 10px;
                 user-select: none;
+                &.is-active {
+                    background: transparent;
+                    border-right-color: var(--el-border-color);
+                    border-bottom-color: var(--el-border-color);
+                }
             }
             .el-table__header-wrapper {
                 display: none;
             }
-            .el-table__cell:nth-of-type(1) {
-                background: #f5f7fa;
-            }
             .el-table .cell {
                 line-height: 16px;
+            }
+            .el-table__inner-wrapper:before {
+                content: unset;
             }
         }
         .info {

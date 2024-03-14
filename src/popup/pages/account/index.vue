@@ -2,11 +2,13 @@
     <div class="account-container">
         <el-scrollbar>
             <div class="platform" v-for="(envs, platform) in data" :key="platform">
-                <div class="platform-title">{{ platform }}</div>
+                <div class="platform-title">
+                    <span>{{ platform }}</span>
+                </div>
                 <div v-for="(list, env) in envs" :key="env">
                     <div class="vibe-title">{{ env }}<i @click.stop="handleAdd(list, platform, env)" class="iconfont icon-tianjiachengyuan"></i></div>
                     <div class="vibe-data">
-                        <el-table stripe :data="list" @row-dblclick="handleLogin">
+                        <el-table :data="list" @row-dblclick="handleLogin" style="--el-table-bg-color: transparent; --el-table-tr-bg-color: transparent">
                             <el-table-column>
                                 <template #default="{ row }">
                                     <el-input size="small" :class="{ readonly: !row.isEdit, 'is-error': row.accountError && row.isEdit }" :readonly="!row.isEdit" v-model="row.account"></el-input>
@@ -141,7 +143,9 @@ onMounted(async () => {
     .platform-title {
         margin-bottom: 10px;
         padding: 10px;
-        background: #e4e7ed;
+        background-image: radial-gradient(transparent 1px, #ffffff 1px);
+        background-size: 2px 2px;
+        backdrop-filter: saturate(50%) blur(4px);
         border-radius: 4px;
         font-weight: 600;
         font-size: 14px;
