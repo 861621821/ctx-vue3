@@ -4,7 +4,6 @@ import path from 'path';
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
-import zipPack from 'vite-plugin-zip-pack';
 import { crx } from '@crxjs/vite-plugin';
 import manifest from './manifest.json';
 import { version } from './package.json';
@@ -58,6 +57,7 @@ export default ({ mode }) => {
             }),
         ],
         build: {
+            outDir: mode === 'production' ? `dist-${version}` : 'dist',
             rollupOptions: {
                 treeshake: true,
                 input: {
@@ -76,10 +76,6 @@ export default ({ mode }) => {
             },
         },
     };
-
-    if (mode === 'production') {
-        config.plugins.push(zipPack({ outDir: './' }));
-    }
 
     return defineConfig(config);
 };
