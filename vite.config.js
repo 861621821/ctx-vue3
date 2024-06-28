@@ -10,9 +10,9 @@ import { version } from './package.json';
 import fs from 'fs';
 
 // 编译完成之后添加jquery到manifest.json
-const fixManifest = () => ({
+const fixManifest = mode => ({
     writeBundle() {
-        const manifestPath = './dist/manifest.json';
+        const manifestPath = `./${mode === 'production' ? `dist-${version}` : 'dist'}/manifest.json`;
         const _manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
         _manifest.version = version;
         _manifest.content_scripts.unshift({
@@ -40,7 +40,7 @@ export default ({ mode }) => {
         plugins: [
             vue(),
             crx({ manifest }),
-            fixManifest(),
+            fixManifest(mode),
             AutoImport({
                 resolvers: [
                     ElementPlusResolver({
