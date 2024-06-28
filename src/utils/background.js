@@ -38,7 +38,6 @@ class Background {
                 default:
                     break;
             }
-            sendResponse({ status: 2 });
         });
 
         this.queryJira();
