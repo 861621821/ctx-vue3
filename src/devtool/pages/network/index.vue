@@ -12,7 +12,6 @@
             <el-input type="text" class="key-words" placeholder="输入关键词过滤" clearable v-model="keyWords" />
             <el-button class="filter-btn" type="primary" plain @click="handleFilter">过滤</el-button>
             <el-checkbox v-model="onlyAjax" disabled label="Fetch/XHR" title="Show Only Fetch/XHR" />
-            <div class="desc"><i class="iconfont icon-tishi"></i>由于Chrome限制，需要先激活NetworkPlus（手动打开面板一次）后才能记录请求信息</div>
         </div>
         <div class="main">
             <div class="left-area">
@@ -78,7 +77,6 @@
 
 <script setup>
 import { ref, nextTick } from 'vue';
-import CryptoJS from 'crypto-js';
 
 const onlyAjax = ref(true);
 const hasError = ref(false);
@@ -89,65 +87,17 @@ const containerRef = ref(null);
 const recordsList = ref([]);
 const keyWords = ref('');
 
-// fix 解密报错
-const filterSpace = str => {
-    return str.replace(/\n/g, '').replace(/\r/g, '').replace(/\s/g, '');
-};
-
-const decryptParams = (data, cookie) => {
-    if (!data?.enc_data) {
-        return data;
-    }
-    try {
-        const key = CryptoJS.enc.Utf8.parse(cookie?.slice(cookie.length - 16));
-        const decipher = CryptoJS.AES.decrypt(filterSpace(data.enc_data), key, {
-            mode: CryptoJS.mode.ECB,
-            padding: CryptoJS.pad.Pkcs7,
-        });
-        const plaintext = decipher.toString(CryptoJS.enc.Utf8);
-        let response = {};
-        try {
-            response = JSON.parse(plaintext);
-        } catch (error) {
-            response = plaintext;
-        }
-        return { ...data, enc_data: response };
-    } catch (error) {
-        hasError.value = true;
-        console.error(error, data, cookie);
-        return { msg: '解码异常，请重试', error };
-    }
-};
-
-const initRecord = record => {
-    // 关键词过滤
-    const { url, method, status, headers, params } = record;
-    if (keyWords.value) {
-        const reg = new RegExp(keyWords.value, 'gi');
-        if (!reg.test(url) && !reg.test(method) && !reg.test(status)) {
-            return;
-        }
-    }
-    const cookie = headers.find(e => e.name?.toLowerCase() === 'security-token')?.value;
-    recordsList.value.push({
-        ...record,
-        i: recordsList.value.length,
-        params: decryptParams(params, cookie),
-    });
-    nextTick(() => {
-        scrollRef.value && scrollRef.value.setScrollTop(containerRef.value.clientHeight);
-    });
-};
-
 const currentRecord = ref(null);
 const currentIndex = ref(-1);
 
+const filterFn = (e)=>{
+    const { url, method, status } = e;
+    const reg = new RegExp(keyWords.value, 'gi');
+    return reg.test(url) || reg.test(method) || reg.test(status);
+}
+
 const handleFilter = () => {
-    recordsList.value = recordsList.value.filter(e => {
-        const { url, method, status } = e;
-        const reg = new RegExp(keyWords.value, 'gi');
-        return reg.test(url) || reg.test(method) || reg.test(status);
-    });
+    recordsList.value = recordsList.value.filter(filterFn);
     currentRecord.value = null;
     currentIndex.value = -1;
 };
@@ -156,7 +106,6 @@ const handleClear = () => {
     recordsList.value = [];
     currentRecord.value = null;
     currentIndex.value = -1;
-    chrome.runtime.sendMessage({ type: 'clear' });
 };
 
 // 对象排序
@@ -193,46 +142,14 @@ const hanldeViewParams = (item, i) => {
     });
 };
 
-chrome.devtools.network.onRequestFinished.addListener(detail => {
-    const {
-        request: { url, postData, headers, method },
-        response: {
-            status,
-            content: { mimeType },
-        },
-    } = detail;
-    // 获取请求头、参数、response
-    let params = {};
-    if (postData?.text) {
-        try {
-            params = JSON.parse(postData.text);
-        } catch (error) {
-            params = postData.text;
-        }
+chrome.runtime.sendMessage({ type: 'NetworkPlusOpen' }, response => {
+    recordsList.value = response;
+})
+
+chrome.runtime.onMessage.addListener(({ type, data }, sender, sendResponse) => {
+    if (type === 'NewRecord') {
+        filterFn(data) && recordsList.value.push(data);
     }
-    detail.getContent(content => {
-        let response = {};
-        try {
-            response = JSON.parse(content);
-        } catch (error) {
-            response = content;
-        }
-        const record = {
-            url,
-            method,
-            status,
-            headers,
-            params,
-            response,
-            mimeType,
-        };
-        const mimeTypes = ['application/json'];
-        if (onlyAjax.value) {
-            mimeTypes.includes(record.mimeType) && initRecord(record);
-        } else {
-            initRecord(record);
-        }
-    });
 });
 </script>
 

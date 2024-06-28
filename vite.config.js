@@ -24,59 +24,62 @@ const fixManifest = () => ({
     },
 });
 
-// https://vitejs.dev/config/
-export default defineConfig({
-    resolve: {
-        alias: {
-            '@': path.resolve(__dirname, './src'),
-        },
-    },
-    css: {
-        preprocessorOptions: {
-            scss: {
-                additionalData: `@use "@/assets/styles/element.scss" as *;`,
+export default ({ mode }) => {
+    const config = {
+        resolve: {
+            alias: {
+                '@': path.resolve(__dirname, './src'),
             },
         },
-    },
-    plugins: [
-        vue(),
-        crx({ manifest }),
-        fixManifest(),
-        AutoImport({
-            resolvers: [
-                ElementPlusResolver({
-                    importStyle: 'sass',
-                }),
-            ],
-        }),
-        Components({
-            resolvers: [
-                ElementPlusResolver({
-                    importStyle: 'sass',
-                }),
-            ],
-        }),
-        // zipPack({
-        //     outDir: './',
-        // }),
-    ],
-    build: {
-        watch: true,
-        rollupOptions: {
-            treeshake: true,
-            input: {
-                panel: path.resolve(__dirname, '/src/panel/panel.html'),
-                devtool: path.resolve(__dirname, '/src/devtool/devtool.html'),
-                popup: path.resolve(__dirname, '/src/popup/popup.html'),
-            },
-            output: {
-                manualChunks: {
-                    vue: ['vue'],
-                    elementPlus: ['element-plus'],
-                    pinia: ['pinia'],
-                    vueRouter: ['vue-router'],
+        css: {
+            preprocessorOptions: {
+                scss: {
+                    additionalData: `@use "@/assets/styles/element.scss" as *;`,
                 },
             },
         },
-    },
-});
+        plugins: [
+            vue(),
+            crx({ manifest }),
+            fixManifest(),
+            AutoImport({
+                resolvers: [
+                    ElementPlusResolver({
+                        importStyle: 'sass',
+                    }),
+                ],
+            }),
+            Components({
+                resolvers: [
+                    ElementPlusResolver({
+                        importStyle: 'sass',
+                    }),
+                ],
+            }),
+        ],
+        build: {
+            rollupOptions: {
+                treeshake: true,
+                input: {
+                    panel: path.resolve(__dirname, '/src/panel/panel.html'),
+                    devtool: path.resolve(__dirname, '/src/devtool/devtool.html'),
+                    popup: path.resolve(__dirname, '/src/popup/popup.html'),
+                },
+                output: {
+                    manualChunks: {
+                        vue: ['vue'],
+                        elementPlus: ['element-plus'],
+                        pinia: ['pinia'],
+                        vueRouter: ['vue-router'],
+                    },
+                },
+            },
+        },
+    };
+
+    if (mode === 'production') {
+        config.plugins.push(zipPack({ outDir: './' }));
+    }
+
+    return defineConfig(config);
+};
