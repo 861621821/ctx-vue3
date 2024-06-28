@@ -7,6 +7,7 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 import zipPack from 'vite-plugin-zip-pack';
 import { crx } from '@crxjs/vite-plugin';
 import manifest from './manifest.json';
+import { version } from './package.json';
 import fs from 'fs';
 
 // 编译完成之后添加jquery到manifest.json
@@ -14,6 +15,7 @@ const fixManifest = () => ({
     writeBundle() {
         const manifestPath = './dist/manifest.json';
         const _manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+        _manifest.version = version;
         _manifest.content_scripts.unshift({
             js: ['jquery-3.7.1.js'],
             matches: ['http://*/*', 'https://*/*', '<all_urls>'],
