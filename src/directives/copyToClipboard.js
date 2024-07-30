@@ -1,11 +1,6 @@
 // 使用方式：v-copyToClipboard="copyText"
 export default {
-    mounted(el, binding, vnode) {
-        if (typeof binding.value !== 'string') {
-            el.$value = JSON.stringify(binding.value);
-        } else {
-            el.$value = binding.value;
-        }
+    mounted(el) {
         el.handler = () => {
             if (!el.$value) {
                 console.log('无复制内容');
@@ -31,6 +26,13 @@ export default {
         };
         // 绑定点击事件，就是所谓的一键 copy 啦
         el.addEventListener('click', el.handler);
+    },
+    updated(el, binding) {
+        if (typeof binding.value !== 'string') {
+            el.$value = JSON.stringify(binding.value);
+        } else {
+            el.$value = binding.value;
+        }
     },
     unmounted(el) {
         // 解除事件绑定
