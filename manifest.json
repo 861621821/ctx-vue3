@@ -1,7 +1,7 @@
 {
     "name": "Ping++",
     "description": "Ping++ Developer",
-    "version": "3.0.0",
+    "version": "3.1.1",
     "manifest_version": 3,
     "devtools_page": "src/panel/panel.html",
     "action": {
@@ -40,7 +40,7 @@
     ],
     "web_accessible_resources": [
         {
-            "resources": ["src/assets/image/new.png"],
+            "resources": ["src/assets/image/new.png", "assets/*.js"],
             "matches": ["<all_urls>"]
         }
     ]
