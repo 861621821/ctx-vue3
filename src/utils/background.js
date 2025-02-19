@@ -3,16 +3,25 @@ class Background {
     appReady = true; // 接收方是否准备好
     requestTime = null; // 请求时间
     stopTime = null; // 记录停止时间 1h后再次提示
-    enableJira = true; // jira提醒开关
+    jira = false; // jira提醒开关
     jiraMap = {};
+    juejin = false; // 掘金签到开关
 
     constructor() {
-        chrome.storage.local.get('enableJira', res => {
-            this.enableJira = res.enableJira ?? true;
+        chrome.storage.local.get('jira', res => {
+            this.jira = res.jira ?? true;
         });
 
-        chrome.storage.onChanged.addListener(({ enableJira }) => {
-            enableJira !== undefined && (this.enableJira = !!enableJira.newValue);
+        chrome.storage.onChanged.addListener(({ jira }) => {
+            jira !== undefined && (this.jira = !!jira.newValue);
+        });
+
+        chrome.storage.local.get('juejin', res => {
+            this.juejin = res.juejin ?? true;
+        });
+
+        chrome.storage.onChanged.addListener(({ juejin }) => {
+            juejin !== undefined && (this.juejin = !!juejin.newValue);
         });
 
         // 监听popup及content消息
@@ -41,7 +50,7 @@ class Background {
         });
 
         this.queryJira();
-        this.juejin();
+        this.juejinSignIn();
         setInterval(() => {
             this.queryJira();
         }, this.TIME_INTERVAL);
@@ -51,7 +60,7 @@ class Background {
             if (windowId !== -1) {
                 this.queryJira(false);
                 this.requestTime = Date.now();
-                this.juejin();
+                this.juejinSignIn();
             }
         });
     }
@@ -101,7 +110,7 @@ class Background {
     // 获取jira分配给我的信息
     queryJira(flag = true) {
         let now = Date.now();
-        if (flag && (!this.enableJira || (this.requestTime && now - this.requestTime < this.TIME_INTERVAL))) {
+        if (flag && (!this.jira || (this.requestTime && now - this.requestTime < this.TIME_INTERVAL))) {
             return;
         }
         this.requestTime = now;
@@ -157,7 +166,10 @@ class Background {
      * @description: 掘金签到
      * @return {*}
      */
-    async juejin() {
+    async juejinSignIn() {
+        if (!this.juejin) {
+            return;
+        }
         const today = new Date().toLocaleDateString();
         const { signInDay = '' } = await chrome.storage.local.get('signInDay');
         if (signInDay !== today) {

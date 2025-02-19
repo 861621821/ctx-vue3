@@ -1,7 +1,7 @@
 {
     "name": "西岚",
     "description": "Xilan`s Chrome Extension",
-    "version": "3.0.0",
+    "version": "3.1.2",
     "manifest_version": 3,
     "devtools_page": "src/panel/panel.html",
     "action": {
@@ -22,34 +22,70 @@
             "description": "打开面板"
         }
     },
-    "permissions": ["tabs", "storage", "webNavigation", "webRequest", "cookies", "notifications"],
-    "host_permissions": ["http://*/*", "https://*/*", "<all_urls>"],
+    "permissions": [
+        "tabs",
+        "storage",
+        "webNavigation",
+        "webRequest",
+        "cookies",
+        "notifications"
+    ],
+    "host_permissions": [
+        "http://*/*",
+        "https://*/*",
+        "<all_urls>"
+    ],
     "background": {
         "service_worker": "src/utils/background.js",
         "type": "module"
     },
     "content_scripts": [
         {
-            "matches": ["http://*/*", "https://*/*", "<all_urls>"],
-            "js": ["src/content/main.js"]
+            "matches": [
+                "http://*/*",
+                "https://*/*",
+                "<all_urls>"
+            ],
+            "js": [
+                "src/content/main.js"
+            ]
         },
         {
-            "matches": ["http://*/*", "https://*/*", "<all_urls>"],
-            "js": ["src/utils/autoLogin.js"]
+            "matches": [
+                "http://*/*",
+                "https://*/*",
+                "<all_urls>"
+            ],
+            "js": [
+                "src/utils/autoLogin.js"
+            ]
         },
         {
-            "matches": ["https://juejin.cn/user/center/signin*"],
-            "js": ["src/utils/juejin.js"]
+            "matches": [
+                "https://juejin.cn/user/center/signin*"
+            ],
+            "js": [
+                "src/utils/juejin.js"
+            ]
         },
         {
-            "matches": ["https://blog.csdn.net/*"],
-            "js": ["src/utils/csdn.js"]
+            "matches": [
+                "https://blog.csdn.net/*"
+            ],
+            "js": [
+                "src/utils/csdn.js"
+            ]
         }
     ],
     "web_accessible_resources": [
         {
-            "resources": ["src/assets/image/new.png", "assets/*.js"],
-            "matches": ["<all_urls>"]
+            "resources": [
+                "src/assets/image/new.png",
+                "assets/*.js"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
         }
     ]
 }
